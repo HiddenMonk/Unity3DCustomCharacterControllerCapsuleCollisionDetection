@@ -47,7 +47,7 @@ When I say character controller, I mainly mean the collision handling and what n
 The character controller has limitations and is made in a way that is fine for my game, but might not be for yours.
 It uses an iterative approach for depenetation since I kept failing to utilize a capsulecast as it was too sensitive to errors.
 It might never be possible to do a proper step offseting (I think you would need to do the capsule casts way...).
-It doesnt handle sliding off slopes properly, you will not slide upwards in he air, but will just go straight.
+It doesnt handle sliding off slopes properly, you will not slide upwards in the air, but will just go straight.
 And probably more =), however, you can of course attempt to change the way the PlayerRigidbody works.
 
 
