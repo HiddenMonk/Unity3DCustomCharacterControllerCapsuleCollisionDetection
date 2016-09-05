@@ -30,7 +30,7 @@ Requires Physics.OverlapCapsule which was introduced in unity 5.4. You might be 
 
 ###--Performance--
 
-Performance compared to physX is pretty bad. The primitive colliders are fine, but its the mesh colliders that have issues... kinda. It can be bad depending on how many triangles you are colliding with. For example, I have a 15,000 triangle mesh that I can get just fine performance so long as that mesh is scaled large enough that I am only colliding with 5 or so triangles or whatever. However, if it was a small object and I was touching half of those triangles, I would need to do calculations on all those triangles. This, at least in my case, should not be an issue.
+Performance compared to physX is pretty bad. Primitive colliders are fine, its the mesh colliders that have issues... kinda. It can be bad depending on how many triangles you are colliding with. For example, I have a 15,000 triangle mesh that I can get just fine performance so long as that mesh is scaled large enough that I am only colliding with 5 or so triangles or whatever. However, if it was a small object and I was touching half of those triangles, I would need to do calculations on all those triangles. This, at least in my case, should not be an issue.
 
 ###--Uniform Scale--
 
