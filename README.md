@@ -14,6 +14,11 @@ Although, if you are looking for something better in terms of custom physics, ma
 
 https://www.assetstore.unity3d.com/en/#!/content/62991
 
+Or this one for jitter physics
+
+http://forum.unity3d.com/threads/jitter-physics-engine-vs-built-in-physx.186325/
+
+
 All in all, you should mainly be using this custom character controller if you want to attempt to make a better one with some of the collision code here or if you are desperate and really need... just something! I didnt really know of these open source C# physics system like bullet, jitter, bepu, etc..., but even now that I do I dont really want to integrate these large scary projects that I have no idea how it works.
 
 
