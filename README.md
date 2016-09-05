@@ -23,25 +23,25 @@ http://forum.unity3d.com/threads/jitter-physics-engine-vs-built-in-physx.186325/
 All in all, you should mainly be using this custom character controller if you want to attempt to make a better one with some of the collision code here or if you are desperate and really need... just something! I didnt really know of these open source C# physics system like bullet, jitter, bepu, etc..., but even now that I do I dont really want to integrate these large scary projects that I have no idea how it works.
 
 
-###To get it out of the way, here are some downsides.
+##To get it out of the way, here are some downsides.
 
-###--Unity Version--
+###Unity Version
 
 Requires Physics.OverlapCapsule which was introduced in unity 5.4. You might be able to get away with multiple OverlapSpheres if you really needed to.
 
-###--Performance--
+###Performance
 
 Performance compared to physX is pretty bad. Primitive colliders are fine, its the mesh colliders that have issues... kinda. It can be bad depending on how many triangles you are colliding with. For example, I have a 15,000 triangle mesh that I can get just fine performance so long as that mesh is scaled large enough that I am only colliding with 5 or so triangles or whatever. However, if it was a small object and I was touching half of those triangles, I would need to do calculations on all those triangles. This, at least in my case, should not be an issue.
 
-###--Uniform Scale--
+###Uniform Scale
 
 Many times I assume uniform scale. The primitive colliders might be able to be scaled non uniformly, but the mesh colliders will start to get weird results. The scale can be (1,1,1), (11.45, 11.45, 11.45), etc... just not something like (1, 456, 24).
 
-###--No terrain collider--
+###No terrain collider
 
 I dont use it.
 
-###--Character Controller--
+###Character Controller
 
 When I say character controller, I mainly mean the collision handling and what not, similar to the unity character controller component. I dont mean a character controller such as one that handles walking animations and such. The "CharacterController" is called PlayerRigidbody in this project.
 
@@ -52,21 +52,21 @@ It doesnt handle sliding off slopes properly, you will not slide upwards in the 
 And probably more =), however, you can of course attempt to change the way the PlayerRigidbody works.
 
 
-###Some good things?
+##Some good things?
 
-###--Framerate independence--
+###Framerate independence
 
 The character controller is designed in a way to acheive good framerate independence.
 
-###--Rotation--
+###Rotation
 
 It should be able to handle any rotations.
 
-###--Garbage collection--
+###Garbage collection
 
 Should be pretty garbage free. No Foreach used and what not...
 
-###--Open Source--
+###Open Source
 
 Its open source, so dig in and learn =)
 
@@ -78,7 +78,7 @@ Here is that project - https://github.com/IronWarrior/SuperCharacterController
 
 They would use multiple spheres to create a capsule shape. I took that and started to get some good results, but kept running into issues. I have found that using multiple spheres is not good enough due to reasons such as running and then jumping against an edge. There would be a sphere ontop that would detect the normal one way, while a sphere lower down would detect the normal a different way. Maybe I could have found the average and what not, but I quickly decided to see if I could just implement an actual capsule collision detection. Thanks to the internet, I was able to do so fairly quickly.
 
-####Collision Detection
+###Collision Detection
 
 So what is the logic behind the capsule collision detection?
 From reading online I have found that you just treat the capsule as a line segment. So all the collision methods are pretty much broken down into LineSegment-XXXX methods like ClosestPointOnLineSegmentToPoint for Capsule-Sphere, ClosestPointsOnTwoLineSegments for Capsule-Capsule, and ClosestPointOnRectangleToLine for Capsule-Box and Capsule-Mesh (triangles). The line segment methods are usually just line methods and then we clamp the result onto the line segment.
@@ -106,11 +106,11 @@ After we get our closest points, if we are using the multipleContacts version of
 I saw in the Super character controller project there was a deprecated RPGMesh tree that was instead of making a tree for each mesh, it creates the tree for a mesh once and stores it so any same mesh can just use it. I liked it so I implemented it as well. The next step I guess would be to save it to file so you dont have to make the trees at runtime every time, but that might not be needed depending on your mesh poly count.
 
 
-###--The Character Controller--
+##--The Character Controller--
 
 I cant use unitys character controller because my game needs the character to rotate on all axis, which unitys character controller cannot do as far as I know, and I dont want to use a rigidbody because I dont want to deal with FixedUpdate as well as fighting with the physics system. If I also want to utilize OnCollisionStay and what not, currently they cause a ton of garbage. The rigidbodies also have a "feature" for performance to where even if you have Continuous Collision Detection set, at slow speeds it will still penetrate into objects which looks terrible when you have a camera follow it. You can have the physics run more times by changing the timestep (and honestly it would still probably be way more performant friendly than this custom character controller), but that still leads me with fighting the physics (which everything will be 1 frame delayed due to how the physics works..) and dealing with the problems FixedUpdate has such as stutter for cameras (possibly ways to avoid).
 
-####Framerate Independent
+###Framerate Independent
 
 A big issue I had with making my own character controller was making it framerate independent. This is something that is relevant regardless if you are using unitys character controller or not so long as it is running in Update (variable timestep) and not FixedUpdate (fixed timestep). I made a thread about my troubles on this and you can see the different methods I was reading about here http://forum.unity3d.com/threads/movement-consistency-and-timesteps-framerate.365703/ 
 (notice the thread was made almost a year ago lol...).
@@ -123,11 +123,11 @@ I ended up changing the way I was handling the variables to match how unreal was
 http://forum.unity3d.com/threads/movement-consistency-problems-distance-and-speed-within-a-time.409148/
 
 
-###--So how does the PlayerRigidbody basically work?--
+##--So how does the PlayerRigidbody basically work?--
 
 In our GetCollisionSafeVelocity we first divide our velocity up so that each time we move we dont move more than a certain safe amount. Ideally you would want to use a capsulecast or something, but I kept running into issues so I am just doing it this way which is less accurate and blah blah, hopefully its at least consistent and good enough.
 
-####Grounding
+###Grounding
 
 The first big thing we do, which I had lots of issues with, is the grounding. If we were to do a capsulecast and what not, we might be able to avoid this whole mess, however, since we are relying on penetrating into objects and depenetrating, we will have to do a buncha hacks for our grounding in order to make sure it stays consistent whether on slopes, edges, etc...
 There is a lot of notes in the code if you would like to study that giant mess of a hack. I honestly dont want to look at it =).
@@ -144,7 +144,7 @@ Unfortunately I cant just rely on those 2 methods since they assume an infinite 
 
 After we do our grounding, we gather any contact points we might have and then do 2 optional things - TryBlockAtSlopeLimit and CleanByIgnoreBehindPlane. TryBlockAtSlopeLimit tries to stop us from going up slopes that are higher than our slope limit as if there is a wall there, and CleanByIgnoreBehindPlane tries to remove any contact points that we might not be interested in. For example, imagine we penetrate into the ground, but under the ground there was a box for whatever reason that we collided into the corner of. That might cause our depenetration method to depenetrate weirdly since it detected something there, but what CleanByIgnoreBehindPlane would do is detect that the box contact point is below the ground contact point and remove it. I have not really tested it so I dont know how well it works or its performance (if you have a lot of contact points then the performance would probably be pretty bad).
 
-####Depenetration
+###Depenetration
 
 Now we get to the next big issue I had with making a character controller which was handling the collision/depenetration. I tried different things and many times I would get very close, but not good enough, especially when it came to being framerate independent. The way I depenetrated or handled grounding affected my chances at framerate independence. 1, 2, skip a few, my depenetration method is nothing special (I think its similar to the one in the super character controller). It handles everything as if it is a sphere (you can basically imagine a capsule with an infinite amount of spheres in it). I used this method when I was using multiple spheres as my collider, but it works just as well for capsules as long as you set up the collision infos correctly.
 Here is an explanation the guy behind the super character controller gave on the subject https://roystanross.wordpress.com/2014/05/07/custom-character-controller-in-unity-part-1-collision-resolution/
@@ -166,7 +166,7 @@ That is kinda the attitude I have in regards to my character controller. I am ju
 
 If you are looking for something better then... welll, the super character controller was my starting point and now I am hopefully satisfied, so perhaps this can now be your starting point =).
 
-###--Some Sources--
+##--Some Sources--
 
 https://github.com/IronWarrior/SuperCharacterController
 
@@ -185,6 +185,6 @@ I just want to put this free asset I found here. Its an asset that has a bunch o
 https://www.assetstore.unity3d.com/en/#!/content/11396
 
 
-###Questions?
+##--Questions?--
 
 You can post here on the unity forums http://forum.unity3d.com/threads/sourcecode-custom-character-controller-capsule-collision-detection.429504/
