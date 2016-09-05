@@ -63,7 +63,7 @@ I saw in the Super character controller project there was a deprecated RPGMesh t
 
 Here is a video demonstrating the Capsule-Mesh collision detection.
 
-[![MeshAABBDemo](http://img.youtube.com/vi/Wxatc2AAvno/0.jpg)](https://www.youtube.com/watch?v=Wxatc2AAvno)
+[![MeshAABBDemo](http://img.youtube.com/vi/Wxatc2AAvno/0.jpg)](https://www.youtube.com/watch?v=Wxatc2AAvno){:target="_blank"}
 
 --The Character Controller--
 
@@ -103,7 +103,7 @@ The depenetration method allows you to decide how many times you want it to iter
 
 Here is a video demonstrating the depenetration method.
 
-[![DepenetrationDemo](http://img.youtube.com/vi/piLQ649XGLM/0.jpg)](https://www.youtube.com/watch?v=piLQ649XGLM)
+[![DepenetrationDemo](http://img.youtube.com/vi/piLQ649XGLM/0.jpg)](https://www.youtube.com/watch?v=piLQ649XGLM){:target="_blank"}
 
 When we increase the Detection Iterations you see the capsule depenetration properly, but there are a lot of blue rays being drawn. Those blue rays are the new contact points that we are detecting each detection iteration. When we lower the detection iterations and increase the Depenetration Iterations, you notice less blue rays as well as our depenetration getting weird towards the end of the box. This is because we are using old collision data to try and save on performance, but that leads to less accuracy. If the boxes were infinite, we probably wouldnt notice any issues.
 
@@ -114,11 +114,19 @@ That is kinda the attitude I have in regards to my character controller. I am ju
 If you are looking for something better then... welll, the super character controller was my starting point and now I am hopefully satisfied, so perhaps this can now be your starting point =).
 
 --Some Sources--
+
 https://github.com/IronWarrior/SuperCharacterController
+
 http://gamedev.stackexchange.com/questions/5585/line-triangle-intersection-last-bits
+
 https://studiofreya.com/3d-math-and-physics/simple-aabb-vs-aabb-collision-detection/
+
 http://wiki.unity3d.com/index.php/3d_Math_functions
+
 I dont think I used anything from geometrictools, but I did keep going back to it to read the code and try to understand things. Many times it looked too complicated (possibly to be optimized and handle many edge cases). I will put it here anyways since it has lots of nice open source code.
+
 https://www.geometrictools.com/
+
 I just want to put this free asset I found here. Its an asset that has a bunch of handy Debug.Draws such as Capsule, Sphere, etc...
+
 https://www.assetstore.unity3d.com/en/#!/content/11396
