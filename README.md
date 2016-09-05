@@ -28,7 +28,7 @@ I dont use it.
 The character controller has limitations and is made in a way that is fine for my game, but might not be for yours. It uses an iterative approach for depenetation since I kept failing to utilize a capsulecast as it was too sensitive to errors.
 
 
-Some good things?
+###Some good things?
 
 ###--Framerate independence--
 
