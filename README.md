@@ -8,7 +8,7 @@ A custom unity3d capsule character controller that uses its own collision detect
 
 ----------------------------------------------------------------------------------------------
 
-I have spent a depressing amount of time trying to get a custom character controller due to some of unitys character controller limitations (such as only rotation around the Y) as well as just the desire to have more control over how things work. I kept trying to make a perfect character controller, but failed again and again and while this may still not be perfect, it is just going to have to do for me. Maybe it would be of help to you as other open source code were to me in creating this.
+I have spent a depressing amount of time trying to get a custom character controller due to some of unitys character controller limitations (such as only rotation around the Y) as well as just the desire to have more control over how things work. I kept trying to make a perfect character controller, but failed again and again and while this may still not be perfect, it is just going to have to do for me. Maybe it would be of help to you as other open source code were to me in creating this. Id consider this controller as a last resort though.
 
 Although, if you are looking for something better in terms of custom physics, maybe look into using whole physics systems like this free asset of bullet physics being integrated with unity.
 
