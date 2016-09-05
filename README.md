@@ -48,11 +48,20 @@ They would use multiple spheres to create a capsule shape. I took that and start
 
 So what is the logic behind the capsule collision detection?
 From reading online I have found that you just treat the capsule as a line segment. So all the collision methods are pretty much broken down into LineSegment-XXXX methods like ClosestPointOnLineSegmentToPoint for Capsule-Sphere, ClosestPointsOnTwoLineSegments for Capsule-Capsule, and ClosestPointOnRectangleToLine for Capsule-Box and Capsule-Mesh (triangles). The line segment methods are usually just line methods and then we clamp the result onto the line segment.
+
 The source code should be pretty clear, but here are some images to help explain.
 
-_________IMAGE_________
+![Capsule-Sphere](https://github.com/HiddenMonk/Unity3DCustomCharacterControllerCapsuleCollisionDetection/blob/master/Images/Capsule-Sphere.png)
+![Capsule-Capsule](https://github.com/HiddenMonk/Unity3DCustomCharacterControllerCapsuleCollisionDetection/blob/master/Images/Capsule-Capsule.png)
+![Capsule-Box](https://github.com/HiddenMonk/Unity3DCustomCharacterControllerCapsuleCollisionDetection/blob/master/Images/Capsule-Box.png)
+
 
 For the mesh colliders, we are using a AABB (axis aligned bounding box) tree to help speed up finding the desired triangles. I was originally using the BSPTree in the Super character controller project, however I think the change to an AABB tree (I think its called that) helped speed things up. The BSPTree had issues with duplicating triangles. I had a 15k triangle mesh that the BSPTree was splitting it into I think 150k triangle tree. The AABB tree has no duplicates.
+
+Here is a video demonstrating the Capsule-Mesh collision detection.
+
+[![MeshAABBDemo](http://img.youtube.com/vi/Wxatc2AAvno/0.jpg)](https://www.youtube.com/watch?v=Wxatc2AAvno)
+
 
 The way its set up is similar to how the BSPTree was setup. We take all the triangles and decide whether to split them to the positive side or the negative side, and the repeat until each box contains only a few triangles. So in the end we will have 1 giant box that contains 2 boxes and those 2 boxes will contain 2 boxes within them which will hold 2 boxes within them, etc... Now to find the triangles we are touching, we first touch the big box, then we check to see which of the 2 boxes inside the big box are are touching and then go inside that box and check the 2 boxes in there and keep doing that until we cant go no more.
 
@@ -61,10 +70,6 @@ Then we take all the possible closest triangles and do something similar to what
 After we get our closest points, if we are using the multipleContacts version of the ClosestPointsOnSurface, I do a "CleanUp" so that I am not just given all these useless contact points. The cleanup method can be very very slow depending on how many contacts there are since we first sort them from closest to farthest, and then we check if a point is behind another points normal plane and if so then we assume its useless to us since the first point should be enough. The cleanup method is not perfect, is very bad for performance, but its all I got for now =).
 
 I saw in the Super character controller project there was a deprecated RPGMesh tree that was instead of making a tree for each mesh, it creates the tree for a mesh once and stores it so any same mesh can just use it. I liked it so I implemented it as well. The next step I guess would be to save it to file so you dont have to make the trees at runtime every time, but that might not be needed depending on your mesh poly count.
-
-Here is a video demonstrating the Capsule-Mesh collision detection.
-
-[![MeshAABBDemo](http://img.youtube.com/vi/Wxatc2AAvno/0.jpg)](https://www.youtube.com/watch?v=Wxatc2AAvno)
 
 
 ###--The Character Controller--
@@ -91,9 +96,10 @@ There is a lot of notes in the code if you would like to study that giant mess o
 I will mention 2 methods that I use in my grounding which is the DepenetrateSphereFromPlaneInDirection and SpherePositionBetween2Planes. I explain the DepenetrateSphereFromPlaneInDirection in a thread here
 http://forum.unity3d.com/threads/need-algorithm-for-depenetrating-sphere-from-wall-in-a-direction.369526/
 As for the SpherePositionBetween2Planes, we are trying to find the minimum distance where a sphere would fit between 2 planes.
+
 Here is an image showing what I mean
 
-_____IMG_________
+![SpherePositionBetween2Planes](https://github.com/HiddenMonk/Unity3DCustomCharacterControllerCapsuleCollisionDetection/blob/master/Images/SpherePositionBetween2Planes.png)
 
 Unfortunately I cant just rely on those 2 methods since they assume an infinite plane and that just isnt the case.
 
@@ -105,7 +111,7 @@ The depenetration method allows you to decide how many times you want it to iter
 
 Here is a video demonstrating the depenetration method.
 
-[![DepenetrationDemo](http://img.youtube.com/vi/piLQ649XGLM/0.jpg)](https://www.youtube.com/watch?v=piLQ649XGLM){:target="_blank"}
+[![DepenetrationDemo](http://img.youtube.com/vi/piLQ649XGLM/0.jpg)](https://www.youtube.com/watch?v=piLQ649XGLM)
 
 
 When we increase the Detection Iterations you see the capsule depenetration properly, but there are a lot of blue rays being drawn. Those blue rays are the new contact points that we are detecting each detection iteration. When we lower the detection iterations and increase the Depenetration Iterations, you notice less blue rays as well as our depenetration getting weird towards the end of the box. This is because we are using old collision data to try and save on performance, but that leads to less accuracy. If the boxes were infinite, we probably wouldnt notice any issues.
