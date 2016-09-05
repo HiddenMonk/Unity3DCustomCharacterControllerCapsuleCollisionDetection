@@ -169,3 +169,8 @@ https://www.geometrictools.com/
 I just want to put this free asset I found here. Its an asset that has a bunch of handy Debug.Draws such as Capsule, Sphere, etc...
 
 https://www.assetstore.unity3d.com/en/#!/content/11396
+
+
+###Questions?
+
+You can post here on the unity forums http://forum.unity3d.com/threads/sourcecode-custom-character-controller-capsule-collision-detection.429504/
