@@ -5,34 +5,34 @@ I have spent a depressing amount of time trying to get a custom character contro
 
 To get it out of the way, here are some downsides.
 
---Unity Version--
+###--Unity Version--
 
 Requires Physics.OverlapCapsule which was introduced in unity 5.4. You might be able to get away with multiple OverlapSpheres if you really needed to.
 
---Performance--
+###--Performance--
 
 Performance compared to physX is pretty bad. The primitive colliders are fine, but its the mesh colliders that have issues... kinda. It can be bad depending on how many triangles you are colliding with. For example, I have a 15,000 triangle mesh that I can get just fine performance so long as that mesh is scaled large enough that I am only colliding with 5 or so triangles or whatever. However, if it was a small object and I was touching half of those triangles, I would need to do calculations on all those triangles. This, at least in my case, should not be an issue.
 
---Uniform Scale--
+###--Uniform Scale--
 
 Many times I assume uniform scale. The primitive colliders might be able to be scaled non uniformly, but the mesh colliders will start to get weird results. The scale can be (1,1,1), (11.45, 11.45, 11.45), etc... just not something like (1, 456, 24).
 
---No terrain collider--
+###--No terrain collider--
 
 I dont use it.
 
---Character Controller--
+###--Character Controller--
 
 The character controller has limitations and is made in a way that is fine for my game, but might not be for yours. It uses an iterative approach for depenetation since I kept failing to utilize a capsulecast as it was too sensitive to errors.
 
 
 Some good things?
 
---Framerate independence--
+###--Framerate independence--
 
 The character controller is designed in a way to acheive good framerate independence.
 
---Open Source--
+###--Open Source--
 
 Its open source, so dig in and learn =)
 
@@ -63,9 +63,10 @@ I saw in the Super character controller project there was a deprecated RPGMesh t
 
 Here is a video demonstrating the Capsule-Mesh collision detection.
 
-<a href="https://www.youtube.com/watch?v=Wxatc2AAvno" target="_blank" alt="MeshAABBDemo"><img src="http://img.youtube.com/vi/Wxatc2AAvno/0.jpg" /></a>
+[![MeshAABBDemo](http://img.youtube.com/vi/Wxatc2AAvno/0.jpg)](https://www.youtube.com/watch?v=Wxatc2AAvno)
 
---The Character Controller--
+
+###--The Character Controller--
 
 I cant use unitys character controller because my game needs the character to rotate on all axis, which unitys character controller cannot do as far as I know, and I dont want to use a rigidbody because I dont want to deal with FixedUpdate as well as fighting with the physics system.
 
@@ -105,6 +106,7 @@ Here is a video demonstrating the depenetration method.
 
 [![DepenetrationDemo](http://img.youtube.com/vi/piLQ649XGLM/0.jpg)](https://www.youtube.com/watch?v=piLQ649XGLM){:target="_blank"}
 
+
 When we increase the Detection Iterations you see the capsule depenetration properly, but there are a lot of blue rays being drawn. Those blue rays are the new contact points that we are detecting each detection iteration. When we lower the detection iterations and increase the Depenetration Iterations, you notice less blue rays as well as our depenetration getting weird towards the end of the box. This is because we are using old collision data to try and save on performance, but that leads to less accuracy. If the boxes were infinite, we probably wouldnt notice any issues.
 
 After we depenetrated, its time to redirect our velocity. In order to be able to stand on slopes, I flatten my velocity. The bad thing about this is that if I am going up a slope and fly off, I will just shoot straight and not up in the air naturally. I am just going to live with that since I dont think my game cares for it.
@@ -113,7 +115,7 @@ That is kinda the attitude I have in regards to my character controller. I am ju
 
 If you are looking for something better then... welll, the super character controller was my starting point and now I am hopefully satisfied, so perhaps this can now be your starting point =).
 
---Some Sources--
+###--Some Sources--
 
 https://github.com/IronWarrior/SuperCharacterController
 
