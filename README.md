@@ -78,6 +78,8 @@ Here is that project - https://github.com/IronWarrior/SuperCharacterController
 
 They would use multiple spheres to create a capsule shape. I took that and started to get some good results, but kept running into issues. I have found that using multiple spheres is not good enough due to reasons such as running and then jumping against an edge. There would be a sphere ontop that would detect the normal one way, while a sphere lower down would detect the normal a different way. Maybe I could have found the average and what not, but I quickly decided to see if I could just implement an actual capsule collision detection. Thanks to the internet, I was able to do so fairly quickly.
 
+####Collision Detection
+
 So what is the logic behind the capsule collision detection?
 From reading online I have found that you just treat the capsule as a line segment. So all the collision methods are pretty much broken down into LineSegment-XXXX methods like ClosestPointOnLineSegmentToPoint for Capsule-Sphere, ClosestPointsOnTwoLineSegments for Capsule-Capsule, and ClosestPointOnRectangleToLine for Capsule-Box and Capsule-Mesh (triangles). The line segment methods are usually just line methods and then we clamp the result onto the line segment.
 
@@ -108,6 +110,7 @@ I saw in the Super character controller project there was a deprecated RPGMesh t
 
 I cant use unitys character controller because my game needs the character to rotate on all axis, which unitys character controller cannot do as far as I know, and I dont want to use a rigidbody because I dont want to deal with FixedUpdate as well as fighting with the physics system. If I also want to utilize OnCollisionStay and what not, currently they cause a ton of garbage. The rigidbodies also have a "feature" for performance to where even if you have Continuous Collision Detection set, at slow speeds it will still penetrate into objects which looks terrible when you have a camera follow it. You can have the physics run more times by changing the timestep (and honestly it would still probably be way more performant friendly than this custom character controller), but that still leads me with fighting the physics (which everything will be 1 frame delayed due to how the physics works..) and dealing with the problems FixedUpdate has such as stutter for cameras (possibly ways to avoid).
 
+####Framerate Independent
 
 A big issue I had with making my own character controller was making it framerate independent. This is something that is relevant regardless if you are using unitys character controller or not so long as it is running in Update (variable timestep) and not FixedUpdate (fixed timestep). I made a thread about my troubles on this and you can see the different methods I was reading about here http://forum.unity3d.com/threads/movement-consistency-and-timesteps-framerate.365703/ 
 (notice the thread was made almost a year ago lol...).
@@ -124,6 +127,8 @@ http://forum.unity3d.com/threads/movement-consistency-problems-distance-and-spee
 
 In our GetCollisionSafeVelocity we first divide our velocity up so that each time we move we dont move more than a certain safe amount. Ideally you would want to use a capsulecast or something, but I kept running into issues so I am just doing it this way which is less accurate and blah blah, hopefully its at least consistent and good enough.
 
+####Grounding
+
 The first big thing we do, which I had lots of issues with, is the grounding. If we were to do a capsulecast and what not, we might be able to avoid this whole mess, however, since we are relying on penetrating into objects and depenetrating, we will have to do a buncha hacks for our grounding in order to make sure it stays consistent whether on slopes, edges, etc...
 There is a lot of notes in the code if you would like to study that giant mess of a hack. I honestly dont want to look at it =).
 
@@ -137,7 +142,9 @@ Here is an image showing what I mean
 
 Unfortunately I cant just rely on those 2 methods since they assume an infinite plane and that just isnt the case.
 
-Once we do our grounding, we gather any contact points we might have and then do 2 optional things - TryBlockAtSlopeLimit and CleanByIgnoreBehindPlane. TryBlockAtSlopeLimit tries to stop us from going up slopes that are higher than our slope limit as if there is a wall there, and CleanByIgnoreBehindPlane tries to remove any contact points that we might not be interested in. For example, imagine we penetrate into the ground, but under the ground there was a box for whatever reason that we collided into the corner of. That might cause our depenetration method to depenetrate weirdly since it detected something there, but what CleanByIgnoreBehindPlane would do is detect that the box contact point is below the ground contant point and remove it. I have not really tested it so I dont know how well it works or its performance (if you have a lot of contact points then the performance would probably be pretty bad).
+After we do our grounding, we gather any contact points we might have and then do 2 optional things - TryBlockAtSlopeLimit and CleanByIgnoreBehindPlane. TryBlockAtSlopeLimit tries to stop us from going up slopes that are higher than our slope limit as if there is a wall there, and CleanByIgnoreBehindPlane tries to remove any contact points that we might not be interested in. For example, imagine we penetrate into the ground, but under the ground there was a box for whatever reason that we collided into the corner of. That might cause our depenetration method to depenetrate weirdly since it detected something there, but what CleanByIgnoreBehindPlane would do is detect that the box contact point is below the ground contact point and remove it. I have not really tested it so I dont know how well it works or its performance (if you have a lot of contact points then the performance would probably be pretty bad).
+
+####Depenetration
 
 Now we get to the next big issue I had with making a character controller which was handling the collision/depenetration. I tried different things and many times I would get very close, but not good enough, especially when it came to being framerate independent. The way I depenetrated or handled grounding affected my chances at framerate independence. 1, 2, skip a few, my depenetration method is nothing special (I think its similar to the one in the super character controller). It handles everything as if it is a sphere (you can basically imagine a capsule with an infinite amount of spheres in it). I used this method when I was using multiple spheres as my collider, but it works just as well for capsules as long as you set up the collision infos correctly.
 Here is an explanation the guy behind the super character controller gave on the subject https://roystanross.wordpress.com/2014/05/07/custom-character-controller-in-unity-part-1-collision-resolution/
@@ -152,6 +159,8 @@ Here is a video demonstrating the depenetration method.
 When we increase the Detection Iterations you see the capsule depenetration properly, but there are a lot of blue rays being drawn. Those blue rays are the new contact points that we are detecting each detection iteration. When we lower the detection iterations and increase the Depenetration Iterations, you notice less blue rays as well as our depenetration getting weird towards the end of the box. This is because we are using old collision data to try and save on performance, but that leads to less accuracy. If the boxes were infinite, we probably wouldnt notice any issues.
 
 After we depenetrated, its time to redirect our velocity. In order to be able to stand on slopes, I flatten my velocity. The bad thing about this is that if I am going up a slope and fly off, I will just shoot straight and not up in the air naturally. I am just going to live with that since I dont think my game cares for it.
+
+-----------------------------------------------------
 
 That is kinda the attitude I have in regards to my character controller. I am just going to live with it. It might have bugs, limitations, not be the best performance wise, etc..., but I just want to start focusing on the game instead of the controller T.T
 
