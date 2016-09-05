@@ -52,8 +52,11 @@ The source code should be pretty clear, but here are some images to help explain
 _________IMAGE_________
 
 For the mesh colliders, we are using a AABB (axis aligned bounding box) tree to help speed up finding the desired triangles. I was originally using the BSPTree in the Super character controller project, however I think the change to an AABB tree (I think its called that) helped speed things up. The BSPTree had issues with duplicating triangles. I had a 15k triangle mesh that the BSPTree was splitting it into I think 150k triangle tree. The AABB tree has no duplicates.
+
 The way its set up is similar to how the BSPTree was setup. We take all the triangles and decide whether to split them to the positive side or the negative side, and the repeat until each box contains only a few triangles. So in the end we will have 1 giant box that contains 2 boxes and those 2 boxes will contain 2 boxes within them which will hold 2 boxes within them, etc... Now to find the triangles we are touching, we first touch the big box, then we check to see which of the 2 boxes inside the big box are are touching and then go inside that box and check the 2 boxes in there and keep doing that until we cant go no more.
+
 Then we take all the possible closest triangles and do something similar to what we did for our Capsule-Box collision which is to find the closest point between the capsule and the triangle. The ClosestPointOnTriangleToLine and ClosestPointOnRectangleToLine are literally the same method except the rectangle needs to check 1 more edge.
+
 After we get our closest points, if we are using the multipleContacts version of the ClosestPointsOnSurface, I do a "CleanUp" so that I am not just given all these useless contact points. The cleanup method can be very very slow depending on how many contacts there are since we first sort them from closest to farthest, and then we check if a point is behind another points normal plane and if so then we assume its useless to us since the first point should be enough. The cleanup method is not perfect, is very bad for performance, but its all I got for now =).
 
 I saw in the Super character controller project there was a deprecated RPGMesh tree that was instead of making a tree for each mesh, it creates the tree for a mesh once and stores it so any same mesh can just use it. I liked it so I implemented it as well. The next step I guess would be to save it to file so you dont have to make the trees at runtime every time, but that might not be needed depending on your mesh poly count.
@@ -82,6 +85,7 @@ In our GetCollisionSafeVelocity we first divide our velocity up so that each tim
 
 The first big thing we do, which I had lots of issues with, is the grounding. If we were to do a capsulecast and what not, we might be able to avoid this whole mess, however, since we are relying on penetrating into objects and depenetrating, we will have to do a buncha hacks for our grounding in order to make sure it stays consistent whether on slopes, edges, etc...
 There is a lot of notes in the code if you would like to study that giant mess of a hack. I honestly dont want to look at it =).
+
 I will mention 2 methods that I use in my grounding which is the DepenetrateSphereFromPlaneInDirection and SpherePositionBetween2Planes. I explain the DepenetrateSphereFromPlaneInDirection in a thread here
 http://forum.unity3d.com/threads/need-algorithm-for-depenetrating-sphere-from-wall-in-a-direction.369526/
 As for the SpherePositionBetween2Planes, we are trying to find the minimum distance where a sphere would fit between 2 planes.
@@ -94,6 +98,7 @@ Unfortunately I cant just rely on those 2 methods since they assume an infinite 
 Once we do our grounding, we gather any contact points we might have and then do 2 optional things - TryBlockAtSlopeLimit and CleanByIgnoreBehindPlane. TryBlockAtSlopeLimit tries to stop us from going up slopes that are higher than our slope limit as if there is a wall there, and CleanByIgnoreBehindPlane tries to remove any contact points that we might not be interested in. For example, imagine we penetrate into the ground, but under the ground there was a box for whatever reason that we collided into the corner of. That might cause our depenetration method to depenetrate weirdly since it detected something there, but what CleanByIgnoreBehindPlane would do is detect that the box contact point is below the ground contant point and remove it. I have not really tested it so I dont know how well it works or its performance (if you have a lot of contact points then the performance would probably be pretty bad).
 
 Now we get to the next big issue I had with making a character controller which was handling the collision/depenetration. I tried different things and many times I would get very close, but not good enough, especially when it came to being framerate independent. The way I depenetrated or handled grounding affected my chances at framerate independence. 1, 2, skip a few, my depenetration method is nothing special (I think its similar to the one in the super character controller). It handles everything as if it is a sphere (you can basically imagine a capsule with an infinite amount of spheres in it). I used this method when I was using multiple spheres as my collider, but it works just as well for capsules as long as you set up the collision infos correctly.
+
 The depenetration method allows you to decide how many times you want it to iterate with the old collision info to depenetrate itself, while my PlayerRigidbody allows you to choose how many iterations you will detect new collision info to keep things up to date. You will basically need to find a balance you are happy with the 2.
 
 Here is a video demonstrating the depenetration method.
@@ -105,6 +110,7 @@ When we increase the Detection Iterations you see the capsule depenetration prop
 After we depenetrated, its time to redirect our velocity. In order to be able to stand on slopes, I flatten my velocity. The bad thing about this is that if I am going up a slope and fly off, I will just shoot straight and not up in the air naturally. I am just going to live with that since I dont think my game cares for it.
 
 That is kinda the attitude I have in regards to my character controller. I am just going to live with it. It might have bugs, limitations, not be the best performance wise, etc..., but I just want to start focusing on the game instead of the controller T.T
+
 If you are looking for something better then... welll, the super character controller was my starting point and now I am hopefully satisfied, so perhaps this can now be your starting point =).
 
 --Some Sources--
