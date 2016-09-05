@@ -3,6 +3,7 @@ A custom unity3d capsule character controller that uses its own collision detect
 
 "Great repository names are short and memorable." - github
 
+Heres a little demo video
 
 [![DemoVideo](https://github.com/HiddenMonk/Unity3DCustomCharacterControllerCapsuleCollisionDetection/blob/master/Images/DemoVideoThumbnail.jpg)](https://www.youtube.com/watch?v=hlQCDaWBfGQ)
 
