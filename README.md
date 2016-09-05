@@ -57,6 +57,10 @@ And probably more =), however, you can of course attempt to change the way the P
 
 The character controller is designed in a way to acheive good framerate independence.
 
+###--Rotation--
+
+It should be able to handle any rotations.
+
 ###--Garbage collection--
 
 Should be pretty garbage free. No Foreach used and what not...
