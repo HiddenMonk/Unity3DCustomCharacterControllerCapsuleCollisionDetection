@@ -88,7 +88,8 @@ There is a nice post about it here http://www.aclockworkberry.com/unreal-engine-
 I ended up changing the way I was handling the variables to match how unreal was handling it. Something I still am not too sure on how to do properly is timed movements, which you can see what I had to say about that here
 http://forum.unity3d.com/threads/movement-consistency-problems-distance-and-speed-within-a-time.409148/
 
-So how does the PlayerRigidbody basically work?
+
+##--So how does the PlayerRigidbody basically work?--
 
 In our GetCollisionSafeVelocity we first divide our velocity up so that each time we move we dont move more than a certain safe amount. Ideally you would want to use a capsulecast or something, but I kept running into issues so I am just doing it this way which is less accurate and blah blah, hopefully its at least consistent and good enough.
 
