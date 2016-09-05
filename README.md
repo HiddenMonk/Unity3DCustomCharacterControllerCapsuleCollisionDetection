@@ -10,6 +10,13 @@ A custom unity3d capsule character controller that uses its own collision detect
 
 I have spent a depressing amount of time trying to get a custom character controller due to some of unitys character controller limitations (such as only rotation around the Y) as well as just the desire to have more control over how things work. I kept trying to make a perfect character controller, but failed again and again and while this may still not be perfect, it is just going to have to do for me. Maybe it would be of help to you as other open source code were to me in creating this.
 
+Although, if you are looking for something better in terms of custom physics, maybe look into using whole physics systems like this free asset of bullet physics being integrated with unity.
+
+https://www.assetstore.unity3d.com/en/#!/content/62991
+
+All in all, you should mainly be using this custom character controller if you want to attempt to make a better one with some of the collision code here or if you are desperate and really need... just something! I didnt really know of these open source C# physics system like bullet, jitter, bepu, etc..., but even now that I do I dont really want to integrate these large scary projects that I have no idea how it works.
+
+
 To get it out of the way, here are some downsides.
 
 ###--Unity Version--
@@ -30,9 +37,13 @@ I dont use it.
 
 ###--Character Controller--
 
-The character controller has limitations and is made in a way that is fine for my game, but might not be for yours. It uses an iterative approach for depenetation since I kept failing to utilize a capsulecast as it was too sensitive to errors.
+When I say character controller, I mainly mean the collision handling and what not, similar to the unity character controller component. I dont mean a character controller such as one that handles walking animations and such. The "CharacterController" is called PlayerRigidbody in this project.
 
-Also, When I say character controller, I mainly mean the collision handling and what not, similar to the unity character controller component. I dont mean a character controller such as one that handles walking animations and such. The "CharacterController" is called PlayerRigidbody in this project.
+The character controller has limitations and is made in a way that is fine for my game, but might not be for yours.
+It uses an iterative approach for depenetation since I kept failing to utilize a capsulecast as it was too sensitive to errors.
+It might never be possible to do a proper step offseting (I think you would need to do the capsule casts way...).
+It doesnt handle sliding off slopes properly, you will not slide upwards in he air, but will just go straight.
+And probably more =), however, you can of course attempt to change the way the PlayerRigidbody works.
 
 
 ###Some good things?
@@ -40,6 +51,10 @@ Also, When I say character controller, I mainly mean the collision handling and 
 ###--Framerate independence--
 
 The character controller is designed in a way to acheive good framerate independence.
+
+###--Garbage collection--
+
+Should be pretty garbage free. No Foreach used and what not...
 
 ###--Open Source--
 
@@ -81,7 +96,8 @@ I saw in the Super character controller project there was a deprecated RPGMesh t
 
 ###--The Character Controller--
 
-I cant use unitys character controller because my game needs the character to rotate on all axis, which unitys character controller cannot do as far as I know, and I dont want to use a rigidbody because I dont want to deal with FixedUpdate as well as fighting with the physics system.
+I cant use unitys character controller because my game needs the character to rotate on all axis, which unitys character controller cannot do as far as I know, and I dont want to use a rigidbody because I dont want to deal with FixedUpdate as well as fighting with the physics system. If I also want to utilize OnCollisionStay and what not, currently they cause a ton of garbage. The rigidbodies also have a "feature" for performance to where even if you have Continuous Collision Detection set, at slow speeds it will still penetrate into objects which looks terrible when you have a camera follow it. You can have the physics run more times by changing the timestep (and honestly it would still probably be way more performant friendly than this custom character controller), but that still leads me with fighting the physics (which everything will be 1 frame delayed due to how the physics works..) and dealing with the problems FixedUpdate has such as stutter for cameras (possibly ways to avoid).
+
 
 A big issue I had with making my own character controller was making it framerate independent. This is something that is relevant regardless if you are using unitys character controller or not so long as it is running in Update (variable timestep) and not FixedUpdate (fixed timestep). I made a thread about my troubles on this and you can see the different methods I was reading about here http://forum.unity3d.com/threads/movement-consistency-and-timesteps-framerate.365703/ 
 (notice the thread was made almost a year ago lol...).
@@ -147,7 +163,3 @@ https://www.geometrictools.com/
 I just want to put this free asset I found here. Its an asset that has a bunch of handy Debug.Draws such as Capsule, Sphere, etc...
 
 https://www.assetstore.unity3d.com/en/#!/content/11396
-
-If you are looking for something better in terms of custom physics, maybe look into this free asset of bullet physics being integrated with unity.
-
-https://www.assetstore.unity3d.com/en/#!/content/62991
