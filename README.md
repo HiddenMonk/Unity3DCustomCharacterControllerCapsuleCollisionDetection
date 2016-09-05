@@ -156,7 +156,7 @@ Here is a video demonstrating the depenetration method.
 [![DepenetrationDemo](https://github.com/HiddenMonk/Unity3DCustomCharacterControllerCapsuleCollisionDetection/blob/master/Images/DepenetrationMethodDemoVideoThumbnail.jpg)](https://www.youtube.com/watch?v=piLQ649XGLM)
 
 
-When we increase the Detection Iterations you see the capsule depenetration properly, but there are a lot of blue rays being drawn. Those blue rays are the new contact points that we are detecting each detection iteration. When we lower the detection iterations and increase the Depenetration Iterations, you notice less blue rays as well as our depenetration getting weird towards the end of the box. This is because we are using old collision data to try and save on performance, but that leads to less accuracy. If the boxes were infinite, we probably wouldnt notice any issues.
+When we increase the Detection Iterations you see the capsule depenetrating properly, but there are a lot of blue rays being drawn. Those blue rays are the new contact points that we are detecting each detection iteration. When we lower the detection iterations and increase the Depenetration Iterations, you notice less blue rays as well as our depenetration getting weird towards the end of the box. This is because we are using old collision data to try and save on performance, but that leads to less accuracy. If the boxes were infinite, we probably wouldnt notice any issues.
 
 After we depenetrated, its time to redirect our velocity. In order to be able to stand on slopes, I flatten my velocity. The bad thing about this is that if I am going up a slope and fly off, I will just shoot straight and not up in the air naturally. I am just going to live with that since I dont think my game cares for it.
 
@@ -164,7 +164,7 @@ After we depenetrated, its time to redirect our velocity. In order to be able to
 
 That is kinda the attitude I have in regards to my character controller. I am just going to live with it. It might have bugs, limitations, not be the best performance wise, etc..., but I just want to start focusing on the game instead of the controller T.T
 
-If you are looking for something better then... welll, the super character controller was my starting point and now I am hopefully satisfied, so perhaps this can now be your starting point =).
+If you are looking for something better then... well, the super character controller was my starting point and now I am hopefully satisfied, so perhaps this can now be your starting point =).
 
 ##--Some Sources--
 
