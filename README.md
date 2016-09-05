@@ -28,7 +28,7 @@ I dont use it.
 ###--Character Controller--
 
 The character controller has limitations and is made in a way that is fine for my game, but might not be for yours. It uses an iterative approach for depenetation since I kept failing to utilize a capsulecast as it was too sensitive to errors.
-
+Also, when I say character controller, I mainly mean the collision handling and what not such as the unity character controller. I dont mean a character controller such as one that handles walking animations and such and such. The "CharacterController" is called the PlayerRigidbody in this project.
 
 ###Some good things?
 
