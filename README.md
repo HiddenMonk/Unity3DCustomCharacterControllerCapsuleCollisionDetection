@@ -63,7 +63,7 @@ I saw in the Super character controller project there was a deprecated RPGMesh t
 
 Here is a video demonstrating the Capsule-Mesh collision detection.
 
-[![MeshAABBDemo](http://img.youtube.com/vi/Wxatc2AAvno/0.jpg)](https://www.youtube.com/watch?v=Wxatc2AAvno){:target="_blank"}
+<a href="https://www.youtube.com/watch?v=Wxatc2AAvno" target="_blank" alt="MeshAABBDemo"><img src="http://img.youtube.com/vi/Wxatc2AAvno/0.jpg" /></a>
 
 --The Character Controller--
 
