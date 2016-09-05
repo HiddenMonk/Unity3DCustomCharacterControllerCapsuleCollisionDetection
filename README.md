@@ -38,8 +38,7 @@ The character controller is designed in a way to acheive good framerate independ
 
 Its open source, so dig in and learn =)
 
-
-The Story...
+--------------------------------------------------------------------------------------------------------
 
 I started off trying to utilize capsule casts, then I ended up finding a open source character controller that had its own collision detection, however, it could only handle spheres.
 
