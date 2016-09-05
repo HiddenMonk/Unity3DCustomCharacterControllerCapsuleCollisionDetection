@@ -4,7 +4,7 @@ A custom unity3d capsule character controller that uses its own collision detect
 "Great repository names are short and memorable." - github
 
 
-[![DemoVideo](http://img.youtube.com/vi/hlQCDaWBfGQ/0.jpg)](https://www.youtube.com/watch?v=hlQCDaWBfGQ)
+[![DemoVideo](https://github.com/HiddenMonk/Unity3DCustomCharacterControllerCapsuleCollisionDetection/blob/master/Images/DemoVideoThumbnail.jpg)](https://www.youtube.com/watch?v=hlQCDaWBfGQ)
 
 ----------------------------------------------------------------------------------------------
 
@@ -91,7 +91,7 @@ For the mesh colliders, we are using a AABB (axis aligned bounding box) tree to 
 
 Here is a video demonstrating the Capsule-Mesh collision detection.
 
-[![MeshAABBDemo](http://img.youtube.com/vi/Wxatc2AAvno/0.jpg)](https://www.youtube.com/watch?v=Wxatc2AAvno)
+[![MeshAABBDemo](https://github.com/HiddenMonk/Unity3DCustomCharacterControllerCapsuleCollisionDetection/blob/master/Images/MeshAABBTreeDemoVideoThumbnail.jpg)](https://www.youtube.com/watch?v=Wxatc2AAvno)
 
 
 The way its set up is similar to how the BSPTree was setup. We take all the triangles and decide whether to split them to the positive side or the negative side, and the repeat until each box contains only a few triangles. So in the end we will have 1 giant box that contains 2 boxes and those 2 boxes will contain 2 boxes within them which will hold 2 boxes within them, etc... Now to find the triangles we are touching, we first touch the big box, then we check to see which of the 2 boxes inside the big box are are touching and then go inside that box and check the 2 boxes in there and keep doing that until we cant go no more.
@@ -145,7 +145,7 @@ The depenetration method allows you to decide how many times you want it to iter
 
 Here is a video demonstrating the depenetration method.
 
-[![DepenetrationDemo](http://img.youtube.com/vi/piLQ649XGLM/0.jpg)](https://www.youtube.com/watch?v=piLQ649XGLM)
+[![DepenetrationDemo](https://github.com/HiddenMonk/Unity3DCustomCharacterControllerCapsuleCollisionDetection/blob/master/Images/DepenetrationMethodDemoVideoThumbnail.jpg)](https://www.youtube.com/watch?v=piLQ649XGLM)
 
 
 When we increase the Detection Iterations you see the capsule depenetration properly, but there are a lot of blue rays being drawn. Those blue rays are the new contact points that we are detecting each detection iteration. When we lower the detection iterations and increase the Depenetration Iterations, you notice less blue rays as well as our depenetration getting weird towards the end of the box. This is because we are using old collision data to try and save on performance, but that leads to less accuracy. If the boxes were infinite, we probably wouldnt notice any issues.
