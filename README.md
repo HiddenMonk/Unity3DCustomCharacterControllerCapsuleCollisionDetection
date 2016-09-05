@@ -147,3 +147,7 @@ https://www.geometrictools.com/
 I just want to put this free asset I found here. Its an asset that has a bunch of handy Debug.Draws such as Capsule, Sphere, etc...
 
 https://www.assetstore.unity3d.com/en/#!/content/11396
+
+If you are looking for something better in terms of custom physics, maybe look into this free asset of bullet physics being integrated with unity.
+
+https://www.assetstore.unity3d.com/en/#!/content/62991
