@@ -20,8 +20,8 @@ namespace CapsuleCharacterCollisionDetection
 			//For framerate independent movement, forces like gravity must be used with ForceMode.Force or Acceleration, at least from my testing.
 			//Likewise, jumping must be used with ForceMode.Impulse or VelocityChange.
 
-			Jump();
-			Gravity();
+			Jump(); //Should probably be put inside DoMovementForces for framerate independent accuracy.
+			Gravity(); //Should be fine in here since its a constant force.
 
 			//We call it here to ensure our mouselook script is ran after we moved to avoid jitter
 			UpdateRigidbody();
