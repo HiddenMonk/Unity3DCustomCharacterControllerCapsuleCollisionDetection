@@ -753,6 +753,7 @@ namespace CapsuleCharacterCollisionDetection
 		{
 			if(!Application.isPlaying) return;
 
+			//Keep in mind that this movement consistency test will not work if you are using FixedUpdate since OnDrawGizmos runs outside FixedUpdate.
 			if(infoDebug.drawMovementConsistency || infoDebug.printMovementConsistency)
 			{
 				float movement = Vector3.Distance(previousPosition, transform.position) / Time.deltaTime;
