@@ -8,6 +8,7 @@ namespace CapsuleCharacterCollisionDetection
 	public class PlayerRigidbody : MonoBehaviour, IRigidbody
 	{
 		#region variables
+		[Range(1e-07f, 1e+09f)] //avoids divide by zero. These are the values unitys Rigidbody uses as min and max.
 		public float mass = 1f;
 		public float drag = 0f;
 		public float slopeLimit = 45f;
@@ -224,6 +225,17 @@ namespace CapsuleCharacterCollisionDetection
 			if(distance > maxRadiusMove)
 			{
 				steps = Mathf.CeilToInt(distance / maxRadiusMove);
+				if(steps > collisionHandleInfo.maxVelocitySteps)
+				{
+					steps = collisionHandleInfo.maxVelocitySteps;
+
+					#region Debug
+#if UNITY_EDITOR
+					Debug.LogWarning("PlayerRigidbody GetCollisionSafeVelocity velocity steps is larger than maxVelocitySteps. To avoid major lag we are limiting the amount of steps which means unsafe collision handling.", gameObject);
+#endif
+					#endregion
+				}
+				
 				stepVelocity /= steps;
 			}
 
@@ -844,6 +856,7 @@ namespace CapsuleCharacterCollisionDetection
 			public SubStepUpdater subStepUpdater = new SubStepUpdater();
 			public int maxCollisionCheckIterations = 15; //On average it runs 2 to 3 times, but on surfaces with opposing normals it could run much more.
 			public int maxDepenetrationIterations = 10;
+			public int maxVelocitySteps = 20; //A safety in case we are moving very fast we dont want to divide our velocity into to many steps since that can cause lag and freeze the game, so we prefer to have the collision be unsafe.
 			public int addNegativeOffsetUntilAttempt = 5;
 			public bool abortIfFailedThisFrame = true; //Prevents us from constantly trying and failing this frame which causes lots of lag if using subUpdater, which would make subUpdater run more and lag more...
 			public bool tryBlockAtSlopeLimit = true;
