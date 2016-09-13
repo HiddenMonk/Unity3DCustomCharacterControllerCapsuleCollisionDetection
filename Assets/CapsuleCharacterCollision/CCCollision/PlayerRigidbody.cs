@@ -231,7 +231,7 @@ namespace CapsuleCharacterCollisionDetection
 
 					#region Debug
 #if UNITY_EDITOR
-					Debug.LogWarning("PlayerRigidbody GetCollisionSafeVelocity velocity steps is larger than maxVelocitySteps. To avoid major lag we are limiting the amount of steps which means unsafe collision handling.", gameObject);
+					if(infoDebug.printOverMaxVelocitySteps) Debug.LogWarning("PlayerRigidbody GetCollisionSafeVelocity velocity steps is larger than maxVelocitySteps. To avoid major lag we are limiting the amount of steps which means unsafe collision handling.", gameObject);
 #endif
 					#endregion
 				}
@@ -871,6 +871,7 @@ namespace CapsuleCharacterCollisionDetection
 			public bool printAttempts = true;
 			public bool printFailCollision = true;
 			public bool pauseOnFailCollision;
+			public bool printOverMaxVelocitySteps = true;
 			public bool drawContacts;
 			public float drawContactsDuration = .0001f;
 			public bool drawGrounding;
