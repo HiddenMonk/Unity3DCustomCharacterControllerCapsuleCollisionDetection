@@ -49,6 +49,7 @@ The character controller has limitations and is made in a way that is fine for m
 It uses an iterative approach for depenetation since I kept failing to utilize a capsulecast as it was too sensitive to errors.
 It might never be possible to do a proper step offseting (I think you would need to do the capsule casts way...).
 It doesnt handle sliding off slopes properly, you will not slide upwards in the air, but will just go straight.
+High speed movements = more lag, possibly to the point where the controller is useless. This is due to how we try to avoid tunneling.
 And probably more =), however, you can of course attempt to change the way the PlayerRigidbody works.
 
 
