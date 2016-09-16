@@ -13,7 +13,7 @@ namespace CapsuleCharacterCollisionDetection
 	{
 		//Instead of building a separate tree for every object with the same mesh, we build them once and reference them.
 		//We can maybe take this one step further by creating and saving the trees during editing and store it to disk.
-		public static Dictionary<Mesh, TriangleAABBTree> trees = new Dictionary<Mesh, TriangleAABBTree>();
+		public static Dictionary<Mesh, Dictionary<int, TriangleAABBTree>> trees = new Dictionary<Mesh, Dictionary<int, TriangleAABBTree>>();
 
 		[Header("Max Triangles Per Node can be set only in edit mode, not while playing.")]
 		public int maxTrianglesPerNode = 3;
@@ -30,10 +30,15 @@ namespace CapsuleCharacterCollisionDetection
 
 			if(!trees.ContainsKey(mesh))
 			{
-				trees.Add(mesh, new TriangleAABBTree(mesh, maxTrianglesPerNode));
+				trees.Add(mesh, new Dictionary<int, TriangleAABBTree>());
 			}
 			
-			tree = trees[mesh];
+			if(!trees[mesh].ContainsKey(maxTrianglesPerNode))
+			{
+				trees[mesh].Add(maxTrianglesPerNode, new TriangleAABBTree(mesh, maxTrianglesPerNode));
+			}
+			
+			tree = trees[mesh][maxTrianglesPerNode];
 		}
 
 		#region Debug
