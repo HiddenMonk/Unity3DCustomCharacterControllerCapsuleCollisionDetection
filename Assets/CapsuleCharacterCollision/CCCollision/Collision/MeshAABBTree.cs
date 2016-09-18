@@ -144,7 +144,7 @@ namespace CapsuleCharacterCollisionDetection
 			closestPointsBufferMultiSphere.Clear();
 
 			Vector3 localPoint = transform.InverseTransformPoint(point);
-			radius /= ExtVector3.Minimum(transform.localScale);
+			radius /= ExtVector3.Minimum(ExtVector3.Abs(transform.localScale));
 			
 			AABB aabb = AABB.CreateSphereAABB(localPoint, radius + .001f);
 			tree.FindClosestTriangles(tree.rootNode, aabb, trianglesBufferMultiSphere, infoDebug);
@@ -178,7 +178,7 @@ namespace CapsuleCharacterCollisionDetection
 			trianglesBufferSingleSphere.Clear();
 
 			Vector3 localPoint = transform.InverseTransformPoint(point);
-			radius /= ExtVector3.Minimum(transform.localScale);
+			radius /= ExtVector3.Minimum(ExtVector3.Abs(transform.localScale));
 
 			AABB aabb = AABB.CreateSphereAABB(localPoint, radius + .001f);
 			tree.FindClosestTriangles(tree.rootNode, aabb, trianglesBufferSingleSphere, infoDebug);
