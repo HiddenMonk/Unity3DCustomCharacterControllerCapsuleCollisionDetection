@@ -104,8 +104,7 @@ namespace CapsuleCharacterCollisionDetection
 			if(handleFriction) acceleration = CheckAndApplyFriction(acceleration, deltaTime);
 			if(handleDrag) acceleration = ApplyDrag(acceleration, drag, deltaTime);
 
-			acceleration = ClampVerticalVelocity(acceleration, deltaTime);
-			acceleration = ClampHorizontalVelocity(acceleration, deltaTime);
+			acceleration = ClampVelocity(acceleration);
 
 			//Symplectic Euler method (Our velocity is pretty much being set beforehand, even though it seems like its being set afterwards)
 			CollisionInfo collisionInfo = Translate(acceleration * deltaTime);
@@ -699,31 +698,38 @@ namespace CapsuleCharacterCollisionDetection
 			return velocity * (1f / (1f + (drag * deltaTime)));
 		}
 
-		public Vector3 ClampHorizontalVelocity(Vector3 velocity, float deltaTime)
+		Vector3 ClampVelocity(Vector3 velocity)
 		{
-			return ClampHorizontalVelocity(velocity, transform.up, maxHorizontalVelocity, deltaTime);
+			velocity = ClampVerticalVelocity(velocity);
+			velocity = ClampHorizontalVelocity(velocity);
+			return velocity;
 		}
-		public static Vector3 ClampHorizontalVelocity(Vector3 velocity, Vector3 transformUp, float maxVelocity, float deltaTime)
+
+		public Vector3 ClampHorizontalVelocity(Vector3 velocity)
+		{
+			return ClampHorizontalVelocity(velocity, transform.up, maxHorizontalVelocity);
+		}
+		public static Vector3 ClampHorizontalVelocity(Vector3 velocity, Vector3 transformUp, float maxVelocity)
 		{
 			Vector3 horizontal, vertical;
 			GetVelocityAxis(velocity, transformUp, out horizontal, out vertical);
-			return vertical + ClampVelocity(horizontal, maxVelocity, deltaTime);
+			return vertical + ClampVelocity(horizontal, maxVelocity);
 		}
 
-		public Vector3 ClampVerticalVelocity(Vector3 velocity, float deltaTime)
+		public Vector3 ClampVerticalVelocity(Vector3 velocity)
 		{
-			return ClampVerticalVelocity(velocity, transform.up, maxVerticalVelocity, deltaTime);
+			return ClampVerticalVelocity(velocity, transform.up, maxVerticalVelocity);
 		}
-		public static Vector3 ClampVerticalVelocity(Vector3 velocity, Vector3 transformUp, float maxVelocity, float deltaTime)
+		public static Vector3 ClampVerticalVelocity(Vector3 velocity, Vector3 transformUp, float maxVelocity)
 		{
 			Vector3 horizontal, vertical;
 			GetVelocityAxis(velocity, transformUp, out horizontal, out vertical);
-			return horizontal + ClampVelocity(vertical, maxVelocity, deltaTime);
+			return horizontal + ClampVelocity(vertical, maxVelocity);
 		}
 
-		public static Vector3 ClampVelocity(Vector3 velocity, float maxVelocity, float deltaTime)
+		public static Vector3 ClampVelocity(Vector3 velocity, float maxVelocity)
 		{
-			return Vector3.ClampMagnitude(velocity * deltaTime, maxVelocity * deltaTime) / deltaTime;
+			return Vector3.ClampMagnitude(velocity, maxVelocity);
 		}
 
 		public static void GetVelocityAxis(Vector3 velocity, Vector3 transformUp, out Vector3 horizontal, out Vector3 vertical)
