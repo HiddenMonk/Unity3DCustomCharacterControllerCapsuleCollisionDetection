@@ -20,7 +20,7 @@ namespace CapsuleCharacterCollisionDetection
 
 		public float maxHorizontalVelocity = Mathf.Infinity;
 		public float maxVerticalVelocity = Mathf.Infinity;
-		public Constraints constraints;
+		public Constraints constraints = new Constraints();
 
 		public bool isGrounded {get; private set;}
 		public Vector3 groundNormal {get; private set;}
@@ -28,14 +28,14 @@ namespace CapsuleCharacterCollisionDetection
 		public bool isOnEdge {get; private set;}
 
 		public bool autoUpdate;
-		public CollisionHandleInfo collisionHandleInfo;
+		public CollisionHandleInfo collisionHandleInfo = new CollisionHandleInfo();
 
 		public Vector3 velocity {get; set;}
 		public Vector3 currentForces {get; set;}
 		public Vector3 currentForcesWithDeltas {get; set;}
 		
 		public LayerMask ignoreLayers;
-		public List<Component> ignoreColliders;
+		public List<Component> ignoreColliders = new List<Component>();
 
 		//Assumes uniform scale.
 		public float capsuleHeight {get {return capsuleCollider.height * transform.lossyScale.x;}}
@@ -46,7 +46,7 @@ namespace CapsuleCharacterCollisionDetection
 
 		int collisionFailedFrame;
 
-		[SerializeField] InfoDebug infoDebug;
+		[SerializeField] InfoDebug infoDebug = new InfoDebug();
 
 		const float maxRadiusMoveDivider = 2f;
 		float maxRadiusMove {get {return capsuleRadius / maxRadiusMoveDivider;}}
