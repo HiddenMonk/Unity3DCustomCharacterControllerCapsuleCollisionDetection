@@ -9,6 +9,14 @@ Heres a little demo video
 
 ----------------------------------------------------------------------------------------------
 
+-------
+-Update-
+Unity has released its own Physics.ClosestPoint and Physics.ComputePenetration methods in the Unity 5.6 beta. Unfortunately it does not handle multiple contact points, however, if you only need a single contact point then it is advised to use unitys methods since it used Physx which should be much more performance friendly.
+Here is the related thread.
+https://forum.unity3d.com/threads/we-need-a-way-to-detect-and-resolve-collision-hits-manually.379699/page-2#post-2876141
+
+-------
+
 I have spent a depressing amount of time trying to get a custom character controller due to some of unitys character controller limitations (such as only rotation around the Y) as well as just the desire to have more control over how things work. I kept trying to make a perfect character controller, but failed again and again and while this may still not be perfect, it is just going to have to do for me. Maybe it would be of help to you as other open source code were to me in creating this. Id consider this controller as a last resort though.
 
 Although, if you are looking for something better in terms of custom physics, maybe look into using whole physics systems like this free asset of bullet physics being integrated with unity.
