@@ -10,7 +10,7 @@ Heres a little demo video
 ----------------------------------------------------------------------------------------------
 
 -------
-#-Update-
+###-Update-
 Unity has released its own Physics.ClosestPoint and Physics.ComputePenetration methods in the Unity 5.6 beta. Unfortunately it does not handle multiple contact points, however, if you only need a single contact point then it is advised to use unitys methods since it used Physx which should be much more performance friendly.
 Here is the related thread.
 https://forum.unity3d.com/threads/we-need-a-way-to-detect-and-resolve-collision-hits-manually.379699/page-2#post-2876141
