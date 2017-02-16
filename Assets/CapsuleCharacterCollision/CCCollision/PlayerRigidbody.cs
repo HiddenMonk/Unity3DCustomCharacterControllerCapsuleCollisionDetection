@@ -33,6 +33,9 @@ namespace CapsuleCharacterCollisionDetection
 		public Vector3 velocity {get; set;}
 		public Vector3 currentForces {get; set;}
 		public Vector3 currentForcesWithDeltas {get; set;}
+		public Vector3 currentSubForcesWithDeltas {get; set;}
+
+		public bool isInsideSubUpdater {get; private set;}
 		
 		public LayerMask ignoreLayers;
 		public List<Component> ignoreColliders = new List<Component>();
@@ -84,7 +87,9 @@ namespace CapsuleCharacterCollisionDetection
 
 		void UpdateMovement()
 		{
+			isInsideSubUpdater = true;
 			collisionHandleInfo.subStepUpdater.Update();
+			isInsideSubUpdater = false;
 			currentForcesWithDeltas = Vector3.zero;
 		}
 
@@ -92,6 +97,7 @@ namespace CapsuleCharacterCollisionDetection
 		{
 			DoMovementForces(deltaTime);
 			UpdateMovementForces(deltaTime);
+			currentSubForcesWithDeltas = Vector3.zero;
 			currentForces = Vector3.zero;
 		}
 
@@ -100,7 +106,7 @@ namespace CapsuleCharacterCollisionDetection
 
 		protected virtual void UpdateMovementForces(float deltaTime)
 		{
-			Vector3 acceleration = velocity + currentForces + (currentForcesWithDeltas * deltaTime);
+			Vector3 acceleration = velocity + currentForces + (currentSubForcesWithDeltas * deltaTime) + (currentForcesWithDeltas * deltaTime);
 			if(handleFriction) acceleration = CheckAndApplyFriction(acceleration, deltaTime);
 			if(handleDrag) acceleration = ApplyDrag(acceleration, drag, deltaTime);
 
@@ -142,13 +148,30 @@ namespace CapsuleCharacterCollisionDetection
 
 		public void AddForce(Vector3 velocity, ForceMode forceMode = ForceMode.Force)
 		{
+			//If we called addforce outside of our subupdater and the forcemode is ForceMode force or acceleration,
+			//we would need to apply the force throughout the whole subupdater to be framerate independent,
+			//otherwise if we are calling addforce within our subupdater, we can just set it once since we assume
+			//the addforce method would be being called multiple times within the subupdater (since thats what forces/accelerations do.
+			//Idealy you should use all ForceMode forces/accelerations within the DoMovementForces method.
+
 			switch(forceMode)
 			{
 				case ForceMode.Force:
-					currentForcesWithDeltas += (velocity / mass);
+					Vector3 forceVel = (velocity / mass);
+					if(isInsideSubUpdater)
+					{
+						currentSubForcesWithDeltas += forceVel;
+					}else{
+						currentForcesWithDeltas += forceVel;
+					}
 					break;
 				case ForceMode.Acceleration:
-					currentForcesWithDeltas += velocity;
+					if(isInsideSubUpdater)
+					{
+						currentSubForcesWithDeltas += velocity;
+					}else{
+						currentForcesWithDeltas += velocity;
+					}
 					break;
 				case ForceMode.Impulse:
 					currentForces += (velocity / mass);
