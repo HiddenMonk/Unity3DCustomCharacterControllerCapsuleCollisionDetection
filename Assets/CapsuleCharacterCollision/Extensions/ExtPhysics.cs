@@ -11,7 +11,7 @@ namespace CapsuleCharacterCollisionDetection
 
 		#region Query ignore colliders
 
-		public enum Inclusion { IncludeOnly = 0, Ignore = 1 } //IncludeOnly = we are testing only against this collider, Ignore = we are ignoring it
+		public enum Inclusion { IncludeOnly = 0, Ignore = 1, Include = 2 } //Include = include this object regardless of layer, IncludeOnly = we are testing only against this collider so ignore the layermask, Ignore = we are ignoring it
 		static IList<Component> tempComponentLayer = new List<Component>();
 
 		static void SetTempComponentLayer(Component component)
@@ -47,13 +47,21 @@ namespace CapsuleCharacterCollisionDetection
 				components[i].gameObject.layer = originalLayers[i];
 			}
 		}
-
-		static int GetMaskAndStoreOriginalLayerAndReassign(Inclusion layerContext, IList<Component> componentsLayers)
+		
+		static int GetMaskAndStoreOriginalLayerAndReassign(int layerMask, Inclusion layerContext, IList<Component> componentsLayers)
 		{
 			StoreOriginalLayerAndReassign(componentsLayers);
-			int mask = ExtLayerMask.physicsSoloCastMask;
-			if(layerContext == Inclusion.Ignore) mask = ~mask;
-			return mask;
+
+			if(layerContext == Inclusion.Ignore)
+			{
+				return ~ExtLayerMask.physicsSoloCastMask & layerMask;
+			}
+			else if(layerContext == Inclusion.IncludeOnly)
+			{
+				return ExtLayerMask.physicsSoloCastMask;
+			}else{
+				return ExtLayerMask.physicsSoloCastMask | layerMask;
+			}
 		}
 		#endregion
 
@@ -65,8 +73,8 @@ namespace CapsuleCharacterCollisionDetection
 		}
 		public static RaycastHit SphereCast(Vector3 origin, float radius, Vector3 direction, IList<Component> componentsLayers, float maxDistance = Mathf.Infinity, int layerMask = Physics.AllLayers, QueryTriggerInteraction queryTriggerInteraction = QueryTriggerInteraction.UseGlobal, Inclusion layerContext = Inclusion.Ignore)
 		{
-			int mask = GetMaskAndStoreOriginalLayerAndReassign(layerContext, componentsLayers);
-			RaycastHit hitInfo = SphereCast(origin, radius, direction, maxDistance, layerMask & mask, queryTriggerInteraction);
+			int mask = GetMaskAndStoreOriginalLayerAndReassign(layerMask, layerContext, componentsLayers);
+			RaycastHit hitInfo = SphereCast(origin, radius, direction, maxDistance, mask, queryTriggerInteraction);
 			RestoreToOriginalLayer(componentsLayers);
 			return hitInfo;
 		}
@@ -86,8 +94,8 @@ namespace CapsuleCharacterCollisionDetection
 		}
 		public static bool CheckSphere(Vector3 origin, float radius, IList<Component> componentsLayers, int layerMask = Physics.AllLayers, QueryTriggerInteraction queryTriggerInteraction = QueryTriggerInteraction.UseGlobal, Inclusion layerContext = Inclusion.Ignore)
 		{
-			int mask = GetMaskAndStoreOriginalLayerAndReassign(layerContext, componentsLayers);
-			bool hasHit = CheckSphere(origin, radius, layerMask & mask, queryTriggerInteraction);
+			int mask = GetMaskAndStoreOriginalLayerAndReassign(layerMask, layerContext, componentsLayers);
+			bool hasHit = CheckSphere(origin, radius, mask, queryTriggerInteraction);
 			RestoreToOriginalLayer(componentsLayers);
 			return hasHit;
 		}
@@ -116,8 +124,8 @@ namespace CapsuleCharacterCollisionDetection
 		}
 		public static bool CheckCapsule(Vector3 segment0, Vector3 segment1, float radius, IList<Component> componentsLayers, int layerMask = Physics.AllLayers, QueryTriggerInteraction queryTriggerInteraction = QueryTriggerInteraction.UseGlobal, Inclusion layerContext = Inclusion.Ignore)
 		{
-			int mask = GetMaskAndStoreOriginalLayerAndReassign(layerContext, componentsLayers);
-			bool hasHit = CheckCapsule(segment0, segment1, radius, layerMask & mask, queryTriggerInteraction);
+			int mask = GetMaskAndStoreOriginalLayerAndReassign(layerMask, layerContext, componentsLayers);
+			bool hasHit = CheckCapsule(segment0, segment1, radius, mask, queryTriggerInteraction);
 			RestoreToOriginalLayer(componentsLayers);
 			return hasHit;
 		}
@@ -143,8 +151,8 @@ namespace CapsuleCharacterCollisionDetection
 		}
 		public static IList<Collider> OverlapSphere(Vector3 origin, float radius, IList<Component> componentsLayers, IList<Collider> resultBuffer, int layerMask = Physics.AllLayers, QueryTriggerInteraction queryTriggerInteraction = QueryTriggerInteraction.UseGlobal, Inclusion layerContext = Inclusion.Ignore)
 		{
-			int mask = GetMaskAndStoreOriginalLayerAndReassign(layerContext, componentsLayers);
-			OverlapSphere(origin, radius, resultBuffer, layerMask & mask, queryTriggerInteraction);
+			int mask = GetMaskAndStoreOriginalLayerAndReassign(layerMask, layerContext, componentsLayers);
+			OverlapSphere(origin, radius, resultBuffer, mask, queryTriggerInteraction);
 			RestoreToOriginalLayer(componentsLayers);
 			return resultBuffer;
 		}
@@ -178,8 +186,8 @@ namespace CapsuleCharacterCollisionDetection
 		}
 		public static IList<Collider> OverlapCapsule(Vector3 segment0, Vector3 segment1, float radius, IList<Component> componentsLayers, IList<Collider> resultBuffer, int layerMask = Physics.AllLayers, QueryTriggerInteraction queryTriggerInteraction = QueryTriggerInteraction.UseGlobal, Inclusion layerContext = Inclusion.Ignore)
 		{
-			int mask = GetMaskAndStoreOriginalLayerAndReassign(layerContext, componentsLayers);
-			OverlapCapsule(segment0, segment1, radius, resultBuffer, layerMask & mask, queryTriggerInteraction);
+			int mask = GetMaskAndStoreOriginalLayerAndReassign(layerMask, layerContext, componentsLayers);
+			OverlapCapsule(segment0, segment1, radius, resultBuffer, mask, queryTriggerInteraction);
 			RestoreToOriginalLayer(componentsLayers);
 			return resultBuffer;
 		}
