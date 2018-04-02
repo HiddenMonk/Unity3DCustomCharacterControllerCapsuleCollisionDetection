@@ -19,8 +19,8 @@ namespace CapsuleCharacterCollisionDetection
 
 			this.radius = radius;
 			this.height = height;
-			this.top = origin + (upDirection * (pointsDistance * .5f));
-			this.bottom = origin - (upDirection * (pointsDistance * .5f));
+			this.top = origin + (upDirection * (PointsDistance(height, radius) * .5f));
+			this.bottom = origin - (upDirection * (PointsDistance(height, radius) * .5f));
 		}
 
 		//We multiply height by offset * 2f since I believe for every amount you add/remove from the radius, you need to do twice as much for the height to keep the ratio the same.
