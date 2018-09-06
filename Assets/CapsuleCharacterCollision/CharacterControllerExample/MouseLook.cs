@@ -9,31 +9,20 @@ namespace CapsuleCharacterCollisionDetection
 		public Transform character;
 		public Transform followPosition;
 
-		float yRotation;
+		float pitch;
 		float yMax = 80f;
-
-		void Awake()
-		{
-			//This is so we can make this a child of the character in edit time to easily move the character around,
-			//and then it will unparent itself at runtime.
-			if(transform.parent == character)
-			{
-				transform.SetParent(character.parent);
-			}
-		}
 
 		void LateUpdate()
 		{
 			transform.position = followPosition.position;
 
-			float xRotation = transform.localEulerAngles.y + (Input.GetAxisRaw("Mouse X") * sensitivity);
+			pitch += -Input.GetAxisRaw("Mouse Y") * sensitivity;
+            		pitch = Mathf.Clamp (pitch, -yMax, yMax);
 
-			yRotation += -Input.GetAxisRaw("Mouse Y") * sensitivity;
-            yRotation = Mathf.Clamp (yRotation, -yMax, yMax);
+			transform.localEulerAngles = new Vector3(pitch, transform.localEulerAngles.y, transform.localEulerAngles.z);
 
-            transform.localEulerAngles = new Vector3(yRotation, xRotation, 0);
-
-			character.localEulerAngles = new Vector3(character.localEulerAngles.x, transform.localEulerAngles.y, character.localEulerAngles.z);
+			float yaw = Input.GetAxisRaw("Mouse X") * sensitivity;
+			character.Rotate(0, yaw, 0);
 		}
 	}
 }
