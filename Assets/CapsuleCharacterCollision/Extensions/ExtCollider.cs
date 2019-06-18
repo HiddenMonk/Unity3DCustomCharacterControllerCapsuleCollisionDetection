@@ -182,7 +182,8 @@ namespace CapsuleCharacterCollisionDetection
 			}
 
 			//Two intersect distances might be the same, so we need to choose the best normal
-			if(xDistance == yDistance || xDistance == zDistance || yDistance == zDistance)
+			//Must compare with ExtMathf.Approximately since float precision can cause errors, especially when dealing with different scales.
+			if(ExtMathf.Approximately(xDistance, yDistance, .0001f) || ExtMathf.Approximately(xDistance, zDistance, .0001f) || ExtMathf.Approximately(yDistance, zDistance, .0001f))
 			{
 				//We need to scale by the colliders scale for reasons I am not too sure of. Has to do with if the collider is scaled weird,
 				//in local space it is just a uniform box which throws off our direction calculation below. Not sure if we should use local or lossy scale.
