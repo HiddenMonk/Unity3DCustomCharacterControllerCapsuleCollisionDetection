@@ -1178,16 +1178,16 @@ namespace CapsuleCharacterCollisionDetection
 		///   DEBUG_QUICKHULL if defined.
 		/// </summary>
 		//[Conditional("DEBUG_QUICKHULL")]
-		void VerifyHorizon()
-		{
-			for (int i = 0; i < horizon.Count; i++)
-			{
-				var prev = i == 0 ? horizon.Count - 1 : i - 1;
-
-				//Assert(horizon[prev].Edge1 == horizon[i].Edge0);
-				//Assert(HasEdge(faces[horizon[i].Face], horizon[i].Edge1, horizon[i].Edge0));
-			}
-		}
+		//void VerifyHorizon()
+		//{
+		//	for (int i = 0; i < horizon.Count; i++)
+		//	{
+		//		var prev = i == 0 ? horizon.Count - 1 : i - 1;
+				 
+		//		Assert(horizon[prev].Edge1 == horizon[i].Edge0);
+		//		Assert(HasEdge(faces[horizon[i].Face], horizon[i].Edge1, horizon[i].Edge0));
+		//	}
+		//}
 
 		/// <summary>
 		///   Method used for debugging, verifies that the faces array
