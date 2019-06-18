@@ -10,9 +10,10 @@ namespace CapsuleCharacterCollisionDetection
 		{
 			IntersectPoints intersections = new IntersectPoints();
 			
-			//I dont think we need to normalize
-			//point1Direction.Normalize();
-			//point2Direction.Normalize();
+			//While not normalizing can still give "correct" results, if the lines are parallel the closest points could be randomly chosen very far away,
+			//so far away that we can start to run into float point precision erros, so we normalize the directions.
+			point1Direction.Normalize();
+			point2Direction.Normalize();
 
 			float a = Vector3.Dot(point1Direction, point1Direction);
 			float b = Vector3.Dot(point1Direction, point2Direction);
@@ -20,10 +21,6 @@ namespace CapsuleCharacterCollisionDetection
  
 			float d = a*e - b*b;
  
-			//This is a check if parallel, howeverm since we are not normalizing the directions, it seems even if they are parallel they will not == 0
-			//so they will get past this point, but its seems to be alright since it seems to still give a correct point (although a point very fary away).
-			//Also, if they are parallel and we dont normalize, the deciding point seems randomly choses on the lines, which while is still correct,
-			//our ClosestPointsOnTwoLineSegments gets undesireable results when on corners. (for example when using it in our ClosestPointOnTriangleToLine).
 			if(d != 0f)
 			{
 				Vector3 r = point1 - point2;

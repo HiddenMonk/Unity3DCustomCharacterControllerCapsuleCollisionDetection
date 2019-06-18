@@ -16,12 +16,22 @@ namespace CapsuleCharacterCollisionDetection
 		int[] tris;
 		Vector3[] triangleNormals;
 
-		public TriangleAABBTree(Mesh mesh, int maxTrianglesPerNode = 3)
+		public TriangleAABBTree(Mesh mesh, int maxTrianglesPerNode = 3, bool generateConvex = false)
 		{
 			this.maxTrianglesPerNode = maxTrianglesPerNode;
 
-			tris = mesh.triangles;
-			vertices = mesh.vertices;
+			if(generateConvex)
+			{
+				List<Vector3> hullVerts = new List<Vector3>();
+				List<int> hullTris = new List<int>();
+				List<Vector3> hullNormals = new List<Vector3>();
+				ConvexHull.GenerateHull(mesh.vertices, true, ref hullVerts, ref hullTris, ref hullNormals);
+				tris = hullTris.ToArray();
+				vertices = hullVerts.ToArray();
+			}else{
+				tris = mesh.triangles;
+				vertices = mesh.vertices;
+			}
 
 			//vertexCount = mesh.vertices.Length;
 			triangleCount = mesh.triangles.Length / 3;

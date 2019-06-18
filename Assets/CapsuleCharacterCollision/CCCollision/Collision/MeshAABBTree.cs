@@ -5,8 +5,6 @@ using System.Collections.Generic;
 namespace CapsuleCharacterCollisionDetection
 {
 	//Edited version of Iron-Warrior SuperCharacterController BSPTree
-
-	//Does not support convex colliders since we are using the meshs triangles directly.
 	
 	[RequireComponent(typeof(MeshCollider))]
 	public class MeshAABBTree : MonoBehaviour
@@ -26,7 +24,8 @@ namespace CapsuleCharacterCollisionDetection
 		{
 			infoDebug.transform = transform;
 
-			Mesh mesh = GetComponent<MeshCollider>().sharedMesh;
+			MeshCollider meshCollider = GetComponent<MeshCollider>();
+			Mesh mesh = meshCollider.sharedMesh;
 
 			if(!trees.ContainsKey(mesh))
 			{
@@ -35,7 +34,7 @@ namespace CapsuleCharacterCollisionDetection
 			
 			if(!trees[mesh].ContainsKey(maxTrianglesPerNode))
 			{
-				trees[mesh].Add(maxTrianglesPerNode, new TriangleAABBTree(mesh, maxTrianglesPerNode));
+				trees[mesh].Add(maxTrianglesPerNode, new TriangleAABBTree(mesh, maxTrianglesPerNode, meshCollider.convex));
 			}
 			
 			tree = trees[mesh][maxTrianglesPerNode];
@@ -144,7 +143,7 @@ namespace CapsuleCharacterCollisionDetection
 			closestPointsBufferMultiSphere.Clear();
 
 			Vector3 localPoint = transform.InverseTransformPoint(point);
-			radius /= ExtVector3.Minimum(ExtVector3.Abs(transform.localScale));
+			radius /= ExtVector3.Minimum(ExtVector3.Abs(transform.lossyScale));
 			
 			AABB aabb = AABB.CreateSphereAABB(localPoint, radius + .001f);
 			tree.FindClosestTriangles(tree.rootNode, aabb, trianglesBufferMultiSphere, infoDebug);
@@ -178,7 +177,7 @@ namespace CapsuleCharacterCollisionDetection
 			trianglesBufferSingleSphere.Clear();
 
 			Vector3 localPoint = transform.InverseTransformPoint(point);
-			radius /= ExtVector3.Minimum(ExtVector3.Abs(transform.localScale));
+			radius /= ExtVector3.Minimum(ExtVector3.Abs(transform.lossyScale));
 
 			AABB aabb = AABB.CreateSphereAABB(localPoint, radius + .001f);
 			tree.FindClosestTriangles(tree.rootNode, aabb, trianglesBufferSingleSphere, infoDebug);
