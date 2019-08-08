@@ -229,9 +229,9 @@ namespace CapsuleCharacterCollisionDetection
 		List<SphereCollisionInfo> collisionPointBuffer = new List<SphereCollisionInfo>();
 		CollisionInfo GetCollisionSafeVelocity(Vector3 targetVelocity)
 		{
-			CollisionInfo collisionInfo = new CollisionInfo();
+			if(collisionHandleInfo.abortIfFailedThisFrame && Time.frameCount == collisionFailedFrame) return new CollisionInfo(){hasFailed = true};
 
-			if(collisionHandleInfo.abortIfFailedThisFrame && Time.frameCount == collisionFailedFrame) return collisionInfo;
+			CollisionInfo collisionInfo = new CollisionInfo();
 
 			Vector3 origin = transform.position;
 			Vector3 targetPosition = origin + targetVelocity;
