@@ -11,7 +11,7 @@ namespace CapsuleCharacterCollisionDetection
 	{
 		//Instead of building a separate tree for every object with the same mesh, we build them once and reference them.
 		//We can maybe take this one step further by creating and saving the trees during editing and store it to disk.
-		public static Dictionary<Mesh, Dictionary<int, TriangleAABBTree>> trees = new Dictionary<Mesh, Dictionary<int, TriangleAABBTree>>();
+		public static Dictionary<Mesh, Dictionary<int, TriangleAABBTree[]>> trees = new Dictionary<Mesh, Dictionary<int, TriangleAABBTree[]>>();
 
 		[Header("Max Triangles Per Node can be set only in edit mode, not while playing.")]
 		public int maxTrianglesPerNode = 3;
@@ -27,17 +27,27 @@ namespace CapsuleCharacterCollisionDetection
 			MeshCollider meshCollider = GetComponent<MeshCollider>();
 			Mesh mesh = meshCollider.sharedMesh;
 
-			if(!trees.ContainsKey(mesh))
+			Dictionary<int, TriangleAABBTree[]> meshTree;
+			if(!trees.TryGetValue(mesh, out meshTree))
 			{
-				trees.Add(mesh, new Dictionary<int, TriangleAABBTree>());
+				meshTree = new Dictionary<int, TriangleAABBTree[]>();
+				trees.Add(mesh, meshTree);
 			}
 			
-			if(!trees[mesh].ContainsKey(maxTrianglesPerNode))
+			TriangleAABBTree[] aabbTrees;
+			if(!meshTree.TryGetValue(maxTrianglesPerNode, out aabbTrees))
 			{
-				trees[mesh].Add(maxTrianglesPerNode, new TriangleAABBTree(mesh, maxTrianglesPerNode, meshCollider.convex));
+				aabbTrees = new TriangleAABBTree[2];
+				meshTree.Add(maxTrianglesPerNode, aabbTrees);
+			}
+
+			int index = meshCollider.convex ? 0 : 1;
+			if(aabbTrees[index] == null)
+			{
+				aabbTrees[index] = new TriangleAABBTree(mesh, maxTrianglesPerNode, meshCollider.convex);
 			}
 			
-			tree = trees[mesh][maxTrianglesPerNode];
+			tree = aabbTrees[index];
 		}
 
 		#region Debug
