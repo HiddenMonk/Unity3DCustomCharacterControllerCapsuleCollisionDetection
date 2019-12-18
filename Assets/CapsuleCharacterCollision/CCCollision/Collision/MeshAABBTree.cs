@@ -250,7 +250,7 @@ namespace CapsuleCharacterCollisionDetection
 
 		bool PointIsBetter(float distance, float shortestDistance, Vector3 shortestPointSphereOrigin, Vector3 shortestPoint, Vector3 currentPointSphereOrigin, Vector3 currentPoint, int shortestTriangleIndex, int currentTriangleIndex, float radiusSquared)
 		{
-			if(shortestTriangleIndex >= 0 && ExtMathf.Approximately(distance, shortestDistance))
+			if(shortestTriangleIndex >= 0 && ExtMathf.Approximately(distance, shortestDistance, .00001f))
 			{
 				if(CompareNormalTo(shortestPointSphereOrigin, shortestPoint, tree.GetTriangleNormal(shortestTriangleIndex), currentPointSphereOrigin, currentPoint, tree.GetTriangleNormal(currentTriangleIndex)))
 				{
@@ -294,7 +294,8 @@ namespace CapsuleCharacterCollisionDetection
 				//the sqrMagnitude as the distance which makes the value very small so we start to get into floating point precision issues. 
 				//Since our CompareNormalTo assumes the distances are the same to compare their angles, if they were slightly off then things will break.
 				//A fix would be to normalize in CompareNormalTo, but that could get expensive..
-				if(ExtMathf.Approximately(x.distance, y.distance))
+		//We changed to normalize for now since we were getting bugs on edges...Epsilon was too small of a value.
+				if(ExtMathf.Approximately(x.distance, y.distance, .00001f))
 				{
 					return CompareNormalTo(x, y);
 				}
@@ -320,7 +321,7 @@ namespace CapsuleCharacterCollisionDetection
 		//We test if the normal faces the sphereOrigin the most. This assumes both points distances to their sphereOrigin is approximately the same.
 		public static bool CompareNormalTo(Vector3 point1SphereOrigin, Vector3 point1, Vector3 point1Normal, Vector3 point2SphereOrigin, Vector3 point2, Vector3 point2Normal)
 		{
-			return Vector3.Dot(point1SphereOrigin - point1, point1Normal) > Vector3.Dot(point2SphereOrigin - point2, point2Normal);
+			return Vector3.Dot((point1SphereOrigin - point1).normalized, point1Normal) > Vector3.Dot((point2SphereOrigin - point2).normalized, point2Normal);
 		}
 
 		public class IntComparerNoGarbage : IEqualityComparer<int>
