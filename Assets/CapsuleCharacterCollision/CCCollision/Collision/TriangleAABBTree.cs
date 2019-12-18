@@ -33,8 +33,8 @@ namespace CapsuleCharacterCollisionDetection
 				vertices = mesh.vertices;
 			}
 
-			//vertexCount = mesh.vertices.Length;
-			triangleCount = mesh.triangles.Length / 3;
+			//vertexCount = vertices.Length;
+			triangleCount = tris.Length / 3;
 
 			triangleNormals = new Vector3[triangleCount];
 
