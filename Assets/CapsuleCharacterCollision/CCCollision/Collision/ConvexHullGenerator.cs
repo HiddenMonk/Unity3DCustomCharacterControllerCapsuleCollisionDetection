@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
+using MIConvexHull;
+using System.Linq;
 
 namespace CapsuleCharacterCollisionDetection
 {
@@ -8,12 +10,45 @@ namespace CapsuleCharacterCollisionDetection
 
 	public static class ConvexHull
 	{
-		static ConvexHullGenerator generator = new ConvexHullGenerator();
-
 		public static void GenerateHull(IList<Vector3> points, bool splitVerts, ref List<Vector3> vertsResults, ref List<int> trisResults, ref List<Vector3> normalsResults)
 		{
-			generator.GenerateHull(points, splitVerts, ref vertsResults, ref trisResults, ref normalsResults);
+			vertsResults.Clear();
+			trisResults.Clear();
+			normalsResults.Clear();
+
+			double[][] verts = new double[points.Count][];
+			for (int i = 0; i < points.Count; i++)
+			{
+				double[] location = new double[3];
+				for (int j = 0; j < 3; j++)
+				{
+					location[j] = points[i][j];
+				}
+				verts[i] = location;
+			}
+
+			var hull = ConvexHull.Create(verts);
+			if(hull.Outcome == ConvexHullCreationResultOutcome.Success)
+			{
+				vertsResults.AddRange(hull.Result.Points.Select(x => new Vector3((float)x.Position[0], (float)x.Position[1], (float)x.Position[2])));
+				var hullPointsList = hull.Result.Points.ToList();
+
+				foreach(var face in hull.Result.Faces)
+				{
+					trisResults.Add(hullPointsList.IndexOf(face.Vertices[0]));
+					trisResults.Add(hullPointsList.IndexOf(face.Vertices[1]));
+					trisResults.Add(hullPointsList.IndexOf(face.Vertices[2]));
+				}
+			}
 		}
+		
+		
+	//We dont use this anymore since for some reason on some meshes it gave bad results, such as 2 verts of a triangle being in same spot, which caused problems like cant calculate the normal and such.
+		//static ConvexHullGenerator generator = new ConvexHullGenerator();
+		//public static void GenerateHull(IList<Vector3> points, bool splitVerts, ref List<Vector3> vertsResults, ref List<int> trisResults, ref List<Vector3> normalsResults)
+		//{
+		//	generator.GenerateHull(points, splitVerts, ref vertsResults, ref trisResults, ref normalsResults);
+		//}
 	}
 
 	//Taken from https://github.com/OskarSigvardsson/unity-quickhull/blob/master/Scripts/ConvexHullCalculator.cs
