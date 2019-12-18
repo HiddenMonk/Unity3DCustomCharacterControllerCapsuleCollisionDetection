@@ -173,8 +173,8 @@ namespace MIConvexHull
             // in this case just add
             if (cvxVNum == 2)
             {
-                convexHullCCW = FindIntermediatePointsForLongSkinny(points, numPoints, indicesUsed[0], indicesUsed[1],
-                    out var newUsedIndices);
+				List<int> newUsedIndices;
+                convexHullCCW = FindIntermediatePointsForLongSkinny(points, numPoints, indicesUsed[0], indicesUsed[1], out newUsedIndices);
                 if (!newUsedIndices.Any())
                     // looks like only two indices total! so all points are co-linear.
                     return new List<TVertex> { points[indicesUsed[0]], points[indicesUsed[1]] };
