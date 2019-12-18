@@ -30,7 +30,11 @@ namespace CapsuleCharacterCollisionDetection
 		public CapsuleShape(Vector3 topSegment, Vector3 bottomSegment, float radius)
 		{
 			this.radius = radius;
-			this.height = Vector3.Distance(topSegment, bottomSegment) + (radius * 2f);
+			
+			//If the distance is zero then its probably like a sphere.
+			float distance = Vector3.Distance(topSegment, bottomSegment);
+			this.height = !Mathf.Approximately(distance, 0f) ? distance + (radius * 2f) : (radius * 2f);
+			
 			this.top = topSegment;
 			this.bottom = bottomSegment;
 		}
@@ -55,9 +59,24 @@ namespace CapsuleCharacterCollisionDetection
 			Vector3 localSegment0 = transform.InverseTransformPoint(capsuleShape.top);
 			Vector3 localSegment1 = transform.InverseTransformPoint(capsuleShape.bottom);
 			
-			float difference = capsuleShape.pointsDistance / Vector3.Distance(localSegment0, localSegment1);
-			
-			return new CapsuleShape((localSegment0 + localSegment1) * .5f, localSegment1 - localSegment0, capsuleShape.height / difference, capsuleShape.radius / difference);
+			float distance = Vector3.Distance(localSegment0, localSegment1);
+			float difference = capsuleShape.pointsDistance / distance;
+
+			//If distance is zero, then the capsule is probably like a sphere.
+			//Not sure if we should just always do it the way that can handle zero.
+
+			if(Mathf.Approximately(distance, 0f) || Mathf.Approximately(difference, 0f))
+			{
+				float minimumScale = ExtVector3.Minimum(ExtVector3.Abs(transform.lossyScale));
+				float height = capsuleShape.height / minimumScale;
+				float radius = capsuleShape.radius / minimumScale;
+
+				return new CapsuleShape((localSegment0 + localSegment1) * .5f, localSegment1 - localSegment0, height, radius);
+			}
+			else
+			{
+				return new CapsuleShape((localSegment0 + localSegment1) * .5f, localSegment1 - localSegment0, capsuleShape.height / difference, capsuleShape.radius / difference);
+			}
 		}
 	}
 }
