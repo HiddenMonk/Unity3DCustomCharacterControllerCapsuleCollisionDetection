@@ -8,6 +8,7 @@ namespace CapsuleCharacterCollisionDetection
 		public Vector3 safeMoveDirection;
 		public Vector3 velocity;
 		public bool hasCollided;
+		public bool hasFailed;
 		public int attempts;
 	}
 }
