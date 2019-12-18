@@ -27,7 +27,7 @@ namespace CapsuleCharacterCollisionDetection
 				verts[i] = location;
 			}
 
-			var hull = ConvexHull.Create(verts);
+			var hull = MIConvexHull.ConvexHull.Create(verts);
 			if(hull.Outcome == ConvexHullCreationResultOutcome.Success)
 			{
 				vertsResults.AddRange(hull.Result.Points.Select(x => new Vector3((float)x.Position[0], (float)x.Position[1], (float)x.Position[2])));
