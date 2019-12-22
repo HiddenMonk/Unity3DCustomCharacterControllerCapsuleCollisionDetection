@@ -59,6 +59,7 @@ namespace CapsuleCharacterCollisionDetection
 		
 		
 	//We dont use this anymore since for some reason on some meshes it gave bad results, such as 2 verts of a triangle being in same spot, which caused problems like cant calculate the normal and such.
+	//However, our new way also gave bad results for other meshes, so we might be able to use this still and just filter out the collinear results (which we do now with the new way).
 		//static ConvexHullGenerator generator = new ConvexHullGenerator();
 		//public static void GenerateHull(IList<Vector3> points, bool splitVerts, ref List<Vector3> vertsResults, ref List<int> trisResults, ref List<Vector3> normalsResults)
 		//{
