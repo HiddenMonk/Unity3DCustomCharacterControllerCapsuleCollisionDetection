@@ -27,17 +27,32 @@ namespace CapsuleCharacterCollisionDetection
 				verts[i] = location;
 			}
 
-			var hull = MIConvexHull.ConvexHull.Create(verts);
+			var hull = ConvexHull.Create(verts, .000001f); //We need to use a higher tolerance than the Constants.DefaultPlaneDistanceTolerance, otherwise we get collinear results which causes vector3.zero normals which causes issues.
 			if(hull.Outcome == ConvexHullCreationResultOutcome.Success)
 			{
-				vertsResults.AddRange(hull.Result.Points.Select(x => new Vector3((float)x.Position[0], (float)x.Position[1], (float)x.Position[2])));
-				var hullPointsList = hull.Result.Points.ToList();
-
+				//As a safetey, removes coplanar (collinear) results that would cause issues if werent removed since their normals would be vector3.zero.
+				int index = 0;
 				foreach(var face in hull.Result.Faces)
 				{
-					trisResults.Add(hullPointsList.IndexOf(face.Vertices[0]));
-					trisResults.Add(hullPointsList.IndexOf(face.Vertices[1]));
-					trisResults.Add(hullPointsList.IndexOf(face.Vertices[2]));
+					var pos = face.Vertices[0].Position;
+					Vector3 v1 = new Vector3((float)pos[0], (float)pos[1], (float)pos[2]);
+					pos = face.Vertices[1].Position;
+					Vector3 v2 = new Vector3((float)pos[0], (float)pos[1], (float)pos[2]);
+					pos = face.Vertices[2].Position;
+					Vector3 v3 = new Vector3((float)pos[0], (float)pos[1], (float)pos[2]);
+
+					if(Vector3.Cross(v2 - v1, v3 - v1).normalized == Vector3.zero)
+					{
+						continue;
+					}
+
+					vertsResults.Add(v1);
+					vertsResults.Add(v2);
+					vertsResults.Add(v3);
+
+					trisResults.Add(index++);
+					trisResults.Add(index++);
+					trisResults.Add(index++);
 				}
 			}
 		}
