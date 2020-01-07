@@ -274,7 +274,8 @@ namespace CapsuleCharacterCollisionDetection
 					Vector3 hitNormal = Vector3.zero;
 					bool hasHit = false;
 					//It is important for us to have a negativeOffset, otherwise our collision detection methods might keep telling us we are penetrated...
-					if(attempts > 0 && attempts < collisionHandleInfo.addNegativeOffsetUntilAttempt) negativeOffset += -smallOffset;
+				//There seems to be float precision errors on large convex mesh colliders (not even that large, like 40 units wide) when using Physics.CheckCapsule (and possibly other physics methods) so try to allow negativeOffset to go below -.01f or so. Not sure if will work well at lower player scales.
+					if(attempts > 0 && negativeOffset > -safeCheckOffset) negativeOffset += -smallOffset;
 		
 					//It is advised to do your grounding somewhere here depending on your grounding method and I also think its better for framerate independence.
 					//Keep in mind the the way your collision system is, it can make or break your chances of framerate independence.
@@ -312,7 +313,7 @@ namespace CapsuleCharacterCollisionDetection
 							hitNormal = (depenetration != Vector3.zero) ? depenetration.normalized : hitNormal;
 			
 							//Final check if we are safe, if not then we just move a little and hope for the best.
-							if(ExtPhysics.CheckCapsule(origin, transformUp, capsuleHeight + ((negativeOffset - smallOffset) * 2f), capsuleRadius + negativeOffset - smallOffset, ignoreColliders, mask))
+							if(ExtPhysics.CheckCapsule(origin, transformUp, capsuleHeight + ((negativeOffset - smallOffset) * 2f), capsuleRadius + (negativeOffset - smallOffset), ignoreColliders, mask))
 							{
 								origin += (hitNormal * smallOffset);
 							}
@@ -886,7 +887,6 @@ namespace CapsuleCharacterCollisionDetection
 			public int maxCollisionCheckIterations = 15; //On average it runs 2 to 3 times, but on surfaces with opposing normals it could run much more.
 			public int maxDepenetrationIterations = 10;
 			public int maxVelocitySteps = 20; //A safety in case we are moving very fast we dont want to divide our velocity into to many steps since that can cause lag and freeze the game, so we prefer to have the collision be unsafe.
-			public int addNegativeOffsetUntilAttempt = 5;
 			public bool abortIfFailedThisFrame = true; //Prevents us from constantly trying and failing this frame which causes lots of lag if using subUpdater, which would make subUpdater run more and lag more...
 			public bool tryBlockAtSlopeLimit = true;
 			public bool cleanByIgnoreBehindPlane;
