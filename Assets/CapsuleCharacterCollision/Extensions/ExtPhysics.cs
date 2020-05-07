@@ -137,6 +137,8 @@ namespace CapsuleCharacterCollisionDetection
 		}
 		public static bool CheckCapsule(Vector3 segment0, Vector3 segment1, float radius, int layerMask = Physics.AllLayers, QueryTriggerInteraction queryTriggerInteraction = QueryTriggerInteraction.UseGlobal)
 		{
+			segment1 = MakeRealCapsule(segment0, segment1, radius);
+			
 			return Physics.CheckCapsule(segment0, segment1, radius, layerMask & ExtLayerMask.ignoreRaycastMask, queryTriggerInteraction);
 		}
 		#endregion
@@ -199,6 +201,8 @@ namespace CapsuleCharacterCollisionDetection
 		}
 		public static IList<Collider> OverlapCapsule(Vector3 segment0, Vector3 segment1, float radius, IList<Collider> resultBuffer, int layerMask = Physics.AllLayers, QueryTriggerInteraction queryTriggerInteraction = QueryTriggerInteraction.UseGlobal)
 		{
+			segment1 = MakeRealCapsule(segment0, segment1, radius);
+			
 			resultBuffer.Clear();
 			int found = Physics.OverlapCapsuleNonAlloc(segment0, segment1, radius, nonAllocateOverlapCapsuleResults, layerMask & ExtLayerMask.ignoreRaycastMask, queryTriggerInteraction);
 			resultBuffer.AddRange(nonAllocateOverlapCapsuleResults, 0, found);
@@ -206,6 +210,21 @@ namespace CapsuleCharacterCollisionDetection
 		}
 		#endregion
 
+		//Ive seen bugginess when the capsule shape is actually a sphere shape (or at least when segment0 and segment1 are equal),
+		//it would collide when not really near something, so we try to detect that and make it a capsule by offsetting it by a tiny amount.
+		static Vector3 MakeRealCapsule(Vector3 segment0, Vector3 segment1, float radius)
+		{
+			float radiusDoubled = radius * 2f;
+			if((segment1 - segment0).sqrMagnitude <= radiusDoubled.Squared())
+			{
+				float distance;
+				Vector3 direction = ExtVector3.Direction(segment0, segment1, out distance);
+				if(direction == Vector3.zero) { direction = Vector3.up; }
+				segment1 += (direction * ((radiusDoubled - distance) + .0001f));
+			}
+			return segment1;
+		}
+			
 		#endregion
 	}
 }
