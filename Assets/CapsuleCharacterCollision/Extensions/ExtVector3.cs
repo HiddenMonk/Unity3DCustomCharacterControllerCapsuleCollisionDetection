@@ -39,6 +39,18 @@ namespace CapsuleCharacterCollisionDetection
 		{
 			return (targetPoint - startPoint).normalized;
 		}
+		
+		public static Vector3 Direction(Vector3 startPoint, Vector3 targetPoint, out float distance)
+		{
+			return Normalize(targetPoint - startPoint, out distance);
+		}
+		
+		public static Vector3 Normalize(this Vector3 vector, out float magnitude)
+		{
+			magnitude = vector.magnitude;
+			if(magnitude == 0) return Vector3.zero;
+			return vector / magnitude;
+		}
 
 		public static bool IsInDirection(Vector3 direction, Vector3 otherDirection, float precision, bool normalizeParameters = true)
 		{
