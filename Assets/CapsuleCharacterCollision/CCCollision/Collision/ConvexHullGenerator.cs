@@ -27,7 +27,7 @@ namespace CapsuleCharacterCollisionDetection
 				verts[i] = location;
 			}
 
-			var hull = ConvexHull.Create(verts, .000001f); //We need to use a higher tolerance than the Constants.DefaultPlaneDistanceTolerance, otherwise we get collinear results which causes vector3.zero normals which causes issues.
+			var hull = MIConvexHull.ConvexHull.Create(verts, .000001f); //We need to use a higher tolerance than the Constants.DefaultPlaneDistanceTolerance, otherwise we get collinear results which causes vector3.zero normals which causes issues.
 			if(hull.Outcome == ConvexHullCreationResultOutcome.Success)
 			{
 				//As a safetey, removes coplanar (collinear) results that would cause issues if werent removed since their normals would be vector3.zero.
