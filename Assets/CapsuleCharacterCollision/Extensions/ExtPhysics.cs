@@ -217,10 +217,9 @@ namespace CapsuleCharacterCollisionDetection
 			float radiusDoubled = radius * 2f;
 			if((segment1 - segment0).sqrMagnitude <= radiusDoubled.Squared())
 			{
-				float distance;
-				Vector3 direction = ExtVector3.Direction(segment0, segment1, out distance);
+				Vector3 direction = ExtVector3.Direction(segment0, segment1);
 				if(direction == Vector3.zero) { direction = Vector3.up; }
-				segment1 += (direction * ((radiusDoubled - distance) + .0001f));
+				segment1 += (direction * .0001f);
 			}
 			return segment1;
 		}
