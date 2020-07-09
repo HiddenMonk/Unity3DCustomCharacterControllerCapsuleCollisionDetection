@@ -238,6 +238,8 @@ namespace CapsuleCharacterCollisionDetection
 					ClosestTrianglePoint closestPoint = closestPoints[i];
 					Vector3 planeNormal = tree.GetTriangleNormal(closestPoint.triangleIndex);
 				
+					if(planeNormal == Vector3.zero) continue;
+				
 					if(!MPlane.IsBehindPlanes(closestPoint.position, ignoreBehindPlanes, -.0001f)) //thanks to the .0001 offset we avoid duplicates
 					{
 						resultsBuffer.Add(new ContactInfo(transform.TransformPoint(closestPoint.position), transform.TransformDirection(planeNormal)));
@@ -250,19 +252,21 @@ namespace CapsuleCharacterCollisionDetection
 
 		bool PointIsBetter(float distance, float shortestDistance, Vector3 shortestPointSphereOrigin, Vector3 shortestPoint, Vector3 currentPointSphereOrigin, Vector3 currentPoint, int shortestTriangleIndex, int currentTriangleIndex, float radiusSquared)
 		{
+			Vector3 currentNormal = tree.GetTriangleNormal(currentTriangleIndex);
+
 			if(shortestTriangleIndex >= 0 && ExtMathf.Approximately(distance, shortestDistance, .00001f))
 			{
-				if(CompareNormalTo(shortestPointSphereOrigin, shortestPoint, tree.GetTriangleNormal(shortestTriangleIndex), currentPointSphereOrigin, currentPoint, tree.GetTriangleNormal(currentTriangleIndex)))
+				if(CompareNormalTo(shortestPointSphereOrigin, shortestPoint, tree.GetTriangleNormal(shortestTriangleIndex), currentPointSphereOrigin, currentPoint, currentNormal))
 				{
 					return false;
 				}
 			}
-			else if (distance > shortestDistance || distance > radiusSquared)
+			else if(distance > shortestDistance || distance > radiusSquared)
 			{
 				return false;
 			}
 
-			return true;
+			return currentNormal != Vector3.zero;
 		}
 
 		public struct ClosestTrianglePoint
@@ -321,6 +325,10 @@ namespace CapsuleCharacterCollisionDetection
 		//We test if the normal faces the sphereOrigin the most. This assumes both points distances to their sphereOrigin is approximately the same.
 		public static bool CompareNormalTo(Vector3 point1SphereOrigin, Vector3 point1, Vector3 point1Normal, Vector3 point2SphereOrigin, Vector3 point2, Vector3 point2Normal)
 		{
+			//Normals can be zero if the triangle has all vertices on the same line.
+			if(point2Normal == Vector3.zero) return true;
+			if(point1Normal == Vector3.zero) return false;
+		
 			return Vector3.Dot((point1SphereOrigin - point1).normalized, point1Normal) > Vector3.Dot((point2SphereOrigin - point2).normalized, point2Normal);
 		}
 
