@@ -256,7 +256,7 @@ namespace CapsuleCharacterCollisionDetection
 
 			if(shortestTriangleIndex >= 0 && ExtMathf.Approximately(distance, shortestDistance, .00001f))
 			{
-				if(CompareNormalTo(shortestPointSphereOrigin, shortestPoint, tree.GetTriangleNormal(shortestTriangleIndex), currentPointSphereOrigin, currentPoint, currentNormal))
+				if(CompareNormalTo(shortestPointSphereOrigin, shortestPoint, tree.GetTriangleNormal(shortestTriangleIndex), currentPointSphereOrigin, currentPoint, currentNormal) == -1)
 				{
 					return false;
 				}
@@ -319,17 +319,22 @@ namespace CapsuleCharacterCollisionDetection
 
 		public static int CompareNormalTo(ClosestTrianglePoint x, ClosestTrianglePoint y)
 		{
-			return CompareNormalTo(x.sphereOrigin, x.position, x.meshTree.tree.GetTriangleNormal(x.triangleIndex), y.sphereOrigin, y.position, y.meshTree.tree.GetTriangleNormal(y.triangleIndex)) ? -1 : 1;
+			return CompareNormalTo(x.sphereOrigin, x.position, x.meshTree.tree.GetTriangleNormal(x.triangleIndex), y.sphereOrigin, y.position, y.meshTree.tree.GetTriangleNormal(y.triangleIndex));
 		}
 
 		//We test if the normal faces the sphereOrigin the most. This assumes both points distances to their sphereOrigin is approximately the same.
-		public static bool CompareNormalTo(Vector3 point1SphereOrigin, Vector3 point1, Vector3 point1Normal, Vector3 point2SphereOrigin, Vector3 point2, Vector3 point2Normal)
+		public static int CompareNormalTo(Vector3 point1SphereOrigin, Vector3 point1, Vector3 point1Normal, Vector3 point2SphereOrigin, Vector3 point2, Vector3 point2Normal)
 		{
 			//Normals can be zero if the triangle has all vertices on the same line.
-			if(point2Normal == Vector3.zero) return true;
-			if(point1Normal == Vector3.zero) return false;
-		
-			return Vector3.Dot((point1SphereOrigin - point1).normalized, point1Normal) > Vector3.Dot((point2SphereOrigin - point2).normalized, point2Normal);
+			if(point1Normal == Vector3.zero && point2Normal == Vector3.zero) return 0;
+			if(point2Normal == Vector3.zero) return -1;
+			if(point1Normal == Vector3.zero) return 1;
+
+			float point1Dot = Vector3.Dot((point1SphereOrigin - point1).normalized, point1Normal);
+			float point2Dot = Vector3.Dot((point2SphereOrigin - point2).normalized, point2Normal);
+			if(point1Dot > point2Dot) return -1;
+			if(point1Dot < point2Dot) return 1;
+			return 0;
 		}
 
 		public class IntComparerNoGarbage : IEqualityComparer<int>
